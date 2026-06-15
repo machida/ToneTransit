@@ -1,0 +1,10 @@
+{
+  "name": "tone-transit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "スケールとコードの関係を指板上で可視化するツール",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test"
+  }
+}

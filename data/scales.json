@@ -1,0 +1,936 @@
+{
+  "major": {
+    "name": "Major (Ionian)",
+    "category": "メジャー系モード",
+    "description": "全音階の基準となる明るい長音階。ポップス・クラシック・ジャズすべての土台で、I–IV–V や ii–V–I の出発点。",
+    "kana": [
+      "メジャー",
+      "イオニアン"
+    ],
+    "over": [
+      "maj7"
+    ],
+    "common": [
+      [
+        2,
+        "m7"
+      ],
+      [
+        5,
+        "maj7"
+      ],
+      [
+        7,
+        "7"
+      ],
+      [
+        9,
+        "m7"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      4,
+      5,
+      7,
+      9,
+      11
+    ]
+  },
+  "dorian": {
+    "name": "Dorian",
+    "category": "メジャー系モード",
+    "description": "♮6を持つ短調モード。暗くなりすぎず洗練された響きで、Im7–IV7のヴァンプやモーダルジャズ、ファンクで多用。",
+    "kana": [
+      "ドリアン"
+    ],
+    "over": [
+      "m7"
+    ],
+    "common": [
+      [
+        5,
+        "7"
+      ],
+      [
+        10,
+        "maj7"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      3,
+      5,
+      7,
+      9,
+      10
+    ]
+  },
+  "phrygian": {
+    "name": "Phrygian",
+    "category": "メジャー系モード",
+    "description": "♭2が生む暗く張り詰めたモード。フラメンコやメタル、スパニッシュな緊張感に。",
+    "kana": [
+      "フリジアン"
+    ],
+    "over": [
+      "m7"
+    ],
+    "common": [
+      [
+        1,
+        "maj7"
+      ]
+    ],
+    "intervals": [
+      0,
+      1,
+      3,
+      5,
+      7,
+      8,
+      10
+    ]
+  },
+  "lydian": {
+    "name": "Lydian",
+    "category": "メジャー系モード",
+    "description": "♯4による浮遊感のある明るいモード。映画音楽やフュージョンのmaj7♯11サウンドに。",
+    "kana": [
+      "リディアン"
+    ],
+    "over": [
+      "maj7"
+    ],
+    "common": [
+      [
+        2,
+        "7"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      4,
+      6,
+      7,
+      9,
+      11
+    ]
+  },
+  "mixolydian": {
+    "name": "Mixolydian",
+    "category": "メジャー系モード",
+    "description": "♭7を持つ長音階。ドミナント7th一発やブルース、ロック、ファンクの基本サウンド。",
+    "kana": [
+      "ミクソリディアン"
+    ],
+    "over": [
+      "7"
+    ],
+    "common": [
+      [
+        10,
+        "maj7"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      4,
+      5,
+      7,
+      9,
+      10
+    ]
+  },
+  "natural_minor": {
+    "name": "Natural Minor (Aeolian)",
+    "category": "メジャー系モード",
+    "description": "自然短音階(エオリアン)。哀愁ある標準的なマイナーで、ポップス/ロックのキー全般に。",
+    "kana": [
+      "ナチュラルマイナー",
+      "マイナー",
+      "エオリアン"
+    ],
+    "over": [
+      "m7"
+    ],
+    "common": [
+      [
+        5,
+        "m7"
+      ],
+      [
+        7,
+        "m7"
+      ],
+      [
+        8,
+        "maj7"
+      ],
+      [
+        10,
+        "7"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      3,
+      5,
+      7,
+      8,
+      10
+    ]
+  },
+  "locrian": {
+    "name": "Locrian",
+    "category": "メジャー系モード",
+    "description": "♭2♭5を持つ最も不安定なモード。m7♭5上、主にマイナーII–VのⅡで一時的に使う。",
+    "kana": [
+      "ロクリアン"
+    ],
+    "over": [
+      "m7b5"
+    ],
+    "intervals": [
+      0,
+      1,
+      3,
+      5,
+      6,
+      8,
+      10
+    ]
+  },
+  "pentatonic_major": {
+    "name": "Major Pentatonic",
+    "category": "ペンタトニック / ブルース",
+    "description": "4・7度を抜いた明るい5音。外しにくくメロディに万能。カントリーやポップス、ロックで定番。",
+    "kana": [
+      "メジャーペンタトニック",
+      "ペンタトニック",
+      "ペンタ"
+    ],
+    "over": [
+      "maj7"
+    ],
+    "common": [
+      [
+        7,
+        "7"
+      ],
+      [
+        9,
+        "m7"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      4,
+      7,
+      9
+    ]
+  },
+  "pentatonic_minor": {
+    "name": "Minor Pentatonic",
+    "category": "ペンタトニック / ブルース",
+    "description": "♭3・♭7中心の5音。ロック/ブルースのギターソロの最も基本的な土台。",
+    "kana": [
+      "マイナーペンタトニック",
+      "ペンタトニック",
+      "ペンタ"
+    ],
+    "over": [
+      "m7"
+    ],
+    "common": [
+      [
+        5,
+        "m7"
+      ],
+      [
+        10,
+        "7"
+      ]
+    ],
+    "intervals": [
+      0,
+      3,
+      5,
+      7,
+      10
+    ]
+  },
+  "pentatonic_dominant": {
+    "name": "Dominant Pentatonic (Mixolydian)",
+    "category": "ペンタトニック / ブルース",
+    "description": "ミクソリディアン系の5音。ドミナント7th上を軽快に流すのに便利。",
+    "kana": [
+      "ドミナントペンタトニック",
+      "ペンタトニック",
+      "ペンタ"
+    ],
+    "over": [
+      "7"
+    ],
+    "intervals": [
+      0,
+      2,
+      4,
+      7,
+      10
+    ]
+  },
+  "blues": {
+    "name": "Minor Blues",
+    "category": "ペンタトニック / ブルース",
+    "description": "マイナーペンタに♭5(ブルーノート)を足した音階。ブルース/ロックの泥臭い表現に。",
+    "kana": [
+      "マイナーブルース",
+      "ブルース"
+    ],
+    "over": [
+      "7",
+      "m7"
+    ],
+    "common": [
+      [
+        5,
+        "7"
+      ],
+      [
+        7,
+        "7"
+      ]
+    ],
+    "intervals": [
+      0,
+      3,
+      5,
+      6,
+      7,
+      10
+    ]
+  },
+  "blues_major": {
+    "name": "Major Blues",
+    "category": "ペンタトニック / ブルース",
+    "description": "メジャーペンタに♭3を足した、明るくも哀愁のあるブルース。カントリーやゴスペルにも。",
+    "kana": [
+      "メジャーブルース",
+      "ブルース"
+    ],
+    "over": [
+      "7",
+      "maj7"
+    ],
+    "common": [
+      [
+        5,
+        "7"
+      ],
+      [
+        7,
+        "7"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      3,
+      4,
+      7,
+      9
+    ]
+  },
+  "melodic_minor": {
+    "name": "Melodic Minor",
+    "category": "メロディックマイナー系",
+    "description": "♮6♮7を持つ短音階。ジャズの主要モード群(リディアン♭7・オルタード等)の母体で、mMaj7や短調のII–Vに。",
+    "kana": [
+      "メロディックマイナー",
+      "メロディクマイナー"
+    ],
+    "over": [
+      "mMaj7"
+    ],
+    "common": [
+      [
+        0,
+        "m6"
+      ],
+      [
+        5,
+        "7"
+      ],
+      [
+        7,
+        "7"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      3,
+      5,
+      7,
+      9,
+      11
+    ]
+  },
+  "lydian_augmented": {
+    "name": "Lydian Augmented (MM 3rd)",
+    "category": "メロディックマイナー系",
+    "description": "メロディックマイナー第3モード。♯4♯5の拡張的で浮遊した響き。maj7♯5に。",
+    "kana": [
+      "リディアンオーグメント",
+      "リディアンオーギュメント"
+    ],
+    "over": [
+      "maj7#5",
+      "maj7"
+    ],
+    "intervals": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      9,
+      11
+    ]
+  },
+  "lydian_dominant": {
+    "name": "Lydian Dominant / Lydian ♭7 (MM 4th)",
+    "category": "メロディックマイナー系",
+    "description": "♯4と♭7を併せ持つ(MM第4モード)。7♯11の定番で、裏コードやフュージョンのドミナントに。",
+    "kana": [
+      "リディアンドミナント",
+      "リディアンフラットセブン",
+      "リディアンセブン"
+    ],
+    "over": [
+      "7"
+    ],
+    "intervals": [
+      0,
+      2,
+      4,
+      6,
+      7,
+      9,
+      10
+    ]
+  },
+  "locrian_sharp2": {
+    "name": "Locrian ♮2 / Half-Diminished (MM 6th)",
+    "category": "メロディックマイナー系",
+    "description": "♮2を持つロクリアン(MM第6モード)。ハーフディミニッシュm7♭5上、マイナーII–VのⅡに最適。",
+    "kana": [
+      "ロクリアンナチュラル2",
+      "ハーフディミニッシュ",
+      "ハーフディミニッシュト"
+    ],
+    "over": [
+      "m7b5"
+    ],
+    "intervals": [
+      0,
+      2,
+      3,
+      5,
+      6,
+      8,
+      10
+    ]
+  },
+  "altered": {
+    "name": "Altered / Super Locrian (MM 7th)",
+    "category": "メロディックマイナー系",
+    "description": "メロディックマイナー第7モード。♭9♯9♯11♭13を全て含み、V7altからの解決で強い緊張を作る。",
+    "kana": [
+      "オルタード",
+      "オルタート",
+      "スーパーロクリアン"
+    ],
+    "over": [
+      "7"
+    ],
+    "intervals": [
+      0,
+      1,
+      3,
+      4,
+      6,
+      8,
+      10
+    ]
+  },
+  "harmonic_minor": {
+    "name": "Harmonic Minor",
+    "category": "ハーモニックマイナー系",
+    "description": "♮7で短調のドミナントV7を生む音階。クラシカルかつ中東/ジプシー的な劇性。短調のV7→Imに。",
+    "kana": [
+      "ハーモニックマイナー"
+    ],
+    "over": [
+      "mMaj7"
+    ],
+    "common": [
+      [
+        5,
+        "m7"
+      ],
+      [
+        7,
+        "7"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      3,
+      5,
+      7,
+      8,
+      11
+    ]
+  },
+  "dorian_sharp4": {
+    "name": "Dorian ♯4 / Ukrainian Dorian (Hm 4th)",
+    "category": "ハーモニックマイナー系",
+    "description": "ハーモニックマイナー第4モード。♯4のエキゾチックなドリアンで、m7上の色付けに。",
+    "kana": [
+      "ドリアンシャープ4",
+      "ウクライナンドリアン",
+      "ウクレイニアンドリアン"
+    ],
+    "over": [
+      "m7"
+    ],
+    "common": [
+      [
+        7,
+        "7"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      3,
+      6,
+      7,
+      9,
+      10
+    ]
+  },
+  "phrygian_dominant": {
+    "name": "Phrygian Dominant (Hm 5th)",
+    "category": "ハーモニックマイナー系",
+    "description": "ハーモニックマイナー第5モード。長3度＋♭2のスパニッシュ/フラメンコ。短調のV7(♭9)に。",
+    "kana": [
+      "フリジアンドミナント",
+      "スパニッシュ"
+    ],
+    "over": [
+      "7"
+    ],
+    "intervals": [
+      0,
+      1,
+      4,
+      5,
+      7,
+      8,
+      10
+    ]
+  },
+  "harmonic_major": {
+    "name": "Harmonic Major",
+    "category": "ハーモニックメジャー系",
+    "description": "長音階の♭6版。maj7上で♭13の独特な陰影を出す。再ハーモナイズの隠し味に。",
+    "kana": [
+      "ハーモニックメジャー"
+    ],
+    "over": [
+      "maj7"
+    ],
+    "common": [
+      [
+        7,
+        "7"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      4,
+      5,
+      7,
+      8,
+      11
+    ]
+  },
+  "whole_tone": {
+    "name": "Whole Tone",
+    "category": "シンメトリック",
+    "description": "全音だけの6音対称音階。重力のない夢想的な響きで、7♯5やドビュッシー的な場面に。",
+    "kana": [
+      "ホールトーン",
+      "全音音階"
+    ],
+    "over": [
+      "aug",
+      "7"
+    ],
+    "intervals": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10
+    ]
+  },
+  "augmented_scale": {
+    "name": "Augmented (Symmetric)",
+    "category": "シンメトリック",
+    "description": "短3度と半音が交互の対称音階。maj7♯5や現代的なテクスチャに。",
+    "kana": [
+      "オーグメント",
+      "オーギュメント",
+      "オーグメンテッド"
+    ],
+    "over": [
+      "maj7",
+      "aug"
+    ],
+    "intervals": [
+      0,
+      3,
+      4,
+      7,
+      8,
+      11
+    ]
+  },
+  "diminished_wh": {
+    "name": "Diminished (Whole-Half)",
+    "category": "シンメトリック",
+    "description": "全-半で並ぶ8音対称音階。dim7コードや経過的パッセージに。",
+    "kana": [
+      "ディミニッシュ",
+      "ディミニッシュト",
+      "ホールハーフ",
+      "コンディミ"
+    ],
+    "over": [
+      "dim"
+    ],
+    "intervals": [
+      0,
+      2,
+      3,
+      5,
+      6,
+      8,
+      9,
+      11
+    ]
+  },
+  "diminished_hw": {
+    "name": "Combination Diminished (Half-Whole)",
+    "category": "シンメトリック",
+    "description": "半-全で並ぶ8音(コンディミ)。ドミナント7th(♭9)の定番で、緊張と推進力を生む。",
+    "kana": [
+      "コンビネーションディミニッシュ",
+      "コンディミ",
+      "ハーフホール",
+      "ドミナントディミニッシュ"
+    ],
+    "over": [
+      "7"
+    ],
+    "intervals": [
+      0,
+      1,
+      3,
+      4,
+      6,
+      7,
+      9,
+      10
+    ]
+  },
+  "bebop_dominant": {
+    "name": "Bebop Dominant",
+    "category": "ビバップ",
+    "description": "ミクソリディアンに♮7を加えた8音。コードトーンが拍に乗るビバップのドミナントライン用。",
+    "kana": [
+      "ビバップドミナント",
+      "ビーバップドミナント"
+    ],
+    "over": [
+      "7"
+    ],
+    "intervals": [
+      0,
+      2,
+      4,
+      5,
+      7,
+      9,
+      10,
+      11
+    ]
+  },
+  "bebop_minor": {
+    "name": "Bebop Minor (Dorian)",
+    "category": "ビバップ",
+    "description": "ドリアンに♮3を足した8音。ビバップの滑らかなマイナーラインに。",
+    "kana": [
+      "ビバップマイナー",
+      "ビバップドリアン",
+      "ビーバップマイナー"
+    ],
+    "over": [
+      "m7"
+    ],
+    "intervals": [
+      0,
+      2,
+      3,
+      4,
+      5,
+      7,
+      9,
+      10
+    ]
+  },
+  "bebop_major": {
+    "name": "Bebop Major",
+    "category": "ビバップ",
+    "description": "長音階に♯5を足した8音。ビバップのメジャーラインやII–V–Iの装飾に。",
+    "kana": [
+      "ビバップメジャー",
+      "ビーバップメジャー"
+    ],
+    "over": [
+      "maj7"
+    ],
+    "common": [
+      [
+        0,
+        "6"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      4,
+      5,
+      7,
+      8,
+      9,
+      11
+    ]
+  },
+  "hirajoshi": {
+    "name": "Hirajoshi (平調子)",
+    "category": "民族 / エキゾチック",
+    "description": "日本の箏の調弦に由来する5音。静謐で陰のある和の響き。",
+    "kana": [
+      "ヒラジョウシ",
+      "ヒラジョシ",
+      "ひらじょうし"
+    ],
+    "over": [
+      "m"
+    ],
+    "intervals": [
+      0,
+      2,
+      3,
+      7,
+      8
+    ]
+  },
+  "in_sen": {
+    "name": "In-Sen (陰旋)",
+    "category": "民族 / エキゾチック",
+    "description": "♭2を持つ都節系の陰旋。緊張感のある和の5音で、エスニックな旋律に。",
+    "kana": [
+      "インセン",
+      "インセンポ",
+      "いんせん"
+    ],
+    "over": [
+      "m"
+    ],
+    "intervals": [
+      0,
+      1,
+      5,
+      7,
+      10
+    ]
+  },
+  "iwato": {
+    "name": "Iwato (岩戸)",
+    "category": "民族 / エキゾチック",
+    "description": "♭2♭5を持つ和の5音。暗く張り詰めた独特の空気感。",
+    "kana": [
+      "イワト",
+      "いわと"
+    ],
+    "intervals": [
+      0,
+      1,
+      5,
+      6,
+      10
+    ]
+  },
+  "kumoi": {
+    "name": "Kumoi (雲井)",
+    "category": "民族 / エキゾチック",
+    "description": "♮6を持つ明るめの和の5音。叙情的な旋律に向く。",
+    "kana": [
+      "クモイ",
+      "くもい"
+    ],
+    "over": [
+      "m"
+    ],
+    "common": [
+      [
+        0,
+        "m6"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      3,
+      7,
+      9
+    ]
+  },
+  "hungarian_minor": {
+    "name": "Hungarian Minor",
+    "category": "民族 / エキゾチック",
+    "description": "♯4を持つハーモニックマイナー系。東欧/ジプシーの劇的でエキゾチックな響き。",
+    "kana": [
+      "ハンガリアンマイナー",
+      "ジプシー",
+      "ジプシーマイナー"
+    ],
+    "over": [
+      "mMaj7"
+    ],
+    "common": [
+      [
+        7,
+        "7"
+      ]
+    ],
+    "intervals": [
+      0,
+      2,
+      3,
+      6,
+      7,
+      8,
+      11
+    ]
+  },
+  "double_harmonic": {
+    "name": "Double Harmonic / Byzantine",
+    "category": "民族 / エキゾチック",
+    "description": "2つの増2度を持つ。ビザンチン/アラビックな強い異国情緒。",
+    "kana": [
+      "ダブルハーモニック",
+      "ビザンチン",
+      "アラビック",
+      "ジプシーメジャー"
+    ],
+    "over": [
+      "maj7"
+    ],
+    "intervals": [
+      0,
+      1,
+      4,
+      5,
+      7,
+      8,
+      11
+    ]
+  },
+  "neapolitan_minor": {
+    "name": "Neapolitan Minor",
+    "category": "民族 / エキゾチック",
+    "description": "♭2を持つハーモニックマイナー系。重く劇的なクラシカルさ。",
+    "kana": [
+      "ネアポリタンマイナー",
+      "ナポリタンマイナー"
+    ],
+    "over": [
+      "mMaj7"
+    ],
+    "intervals": [
+      0,
+      1,
+      3,
+      5,
+      7,
+      8,
+      11
+    ]
+  },
+  "neapolitan_major": {
+    "name": "Neapolitan Major",
+    "category": "民族 / エキゾチック",
+    "description": "♭2を持つメロディックマイナー系。明暗を併せ持つ独特の浮遊感。",
+    "kana": [
+      "ネアポリタンメジャー",
+      "ナポリタンメジャー"
+    ],
+    "over": [
+      "maj7"
+    ],
+    "intervals": [
+      0,
+      1,
+      3,
+      5,
+      7,
+      9,
+      11
+    ]
+  },
+  "persian": {
+    "name": "Persian",
+    "category": "民族 / エキゾチック",
+    "description": "2つの増2度を持つ中東的な音階。強い緊張とドラマ性。",
+    "kana": [
+      "ペルシャン",
+      "ペルシャ",
+      "ペルシア"
+    ],
+    "intervals": [
+      0,
+      1,
+      4,
+      5,
+      6,
+      8,
+      11
+    ]
+  }
+}

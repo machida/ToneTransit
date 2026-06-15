@@ -1,0 +1,495 @@
+/* app.css — screen styles for ToneTransit
+ *
+ * Design: dark slate UI + violet accent (adapted from logofit). The diagram
+ * sits on a light "paper" card so the screen matches the printout. The note
+ * palette is variable-driven; the monochrome toggle (.tt-mono) just swaps the
+ * variables. print.css handles page setup / hiding chrome.
+ *
+ * Sections:
+ *   1. Tokens (variables)      5. Combobox / checkboxes / chips
+ *   2. Base + layout           6. Preview toolbar + actions
+ *   3. Control cards           7. Sheet + fretboard + legend
+ *   4. Form controls           8. Monochrome palette + toast
+ */
+
+/* ============================================================ 1. Tokens */
+:root {
+  /* Dark UI */
+  --bg: #0f172a;
+  --bg-elev: #1e293b;
+  --bg-elev2: #334155;
+  --bg-input: #0b1220;
+  --border: #334155;
+  --text: #f1f5f9;
+  --text-dim: #94a3b8;
+  --accent: #7c3aed;
+  --accent-strong: #6d28d9;
+  --accent-soft: #a78bfa;
+  --accent-glow: 0 2px 10px -2px rgba(124, 58, 237, 0.5);
+  --danger: #f87171;
+
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+  --sans: 'Avenir Next', 'Hiragino Sans', 'Noto Sans JP', 'Segoe UI', Roboto, sans-serif;
+
+  /* Light "paper" (diagram) — independent of the dark UI. */
+  --paper: #ffffff;
+  --paper-ink: #1f2733;
+  --paper-dim: #475569;
+  --paper-line: #d8dee6;
+
+  /* Note palette (colour mode). .tt-mono redefines these as achromatic.
+     Each role has a fill, a matching label (-fg) colour and a darker shade of
+     its own fill for the circle outline (-stroke). --note-stroke is the dark
+     colour used for the rings (guide / out-of-scale), kept independent. */
+  --note-stroke: #1f2733;
+  --note-root: #111827;   --note-root-fg: #ffffff;  --note-root-stroke: #000000; /* root (1) */
+  --note-chord: #2563eb;  --note-chord-fg: #ffffff; --note-chord-stroke: #1e40af; /* chord tone (blue) */
+  --note-guide: var(--note-chord); --note-guide-fg: var(--note-chord-fg); /* guide = chord colour; ring marks it */
+  --note-scale: #e7ebf1;  --note-scale-fg: #1f2733; --note-scale-stroke: #9aa6b6; /* scale note (light) */
+  --note-out: #a9c4ef;    --note-out-fg: #1f2733;   --note-out-stroke: #5e82c0;  /* chord tone outside scale */
+
+  color-scheme: dark;
+}
+
+/* ============================================================ 2. Base + layout */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { margin: 0; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
+
+/* Shared "micro label" used above fields and tool groups. */
+.tt-field > label,
+.tt-tool-label,
+.tt-reco-label,
+.tt-notes-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tt-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.tt-brand {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.tt-brand h1 { font-size: 26px; letter-spacing: -0.03em; }
+.tt-brand h1 .tt-accent { color: var(--accent-soft); }
+.tt-brand p { margin: 0; color: var(--text-dim); font-size: 14px; }
+
+.tt-main {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 22px 24px 64px;
+}
+
+/* ============================================================ 3. Control cards */
+.tt-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch; /* scale & chord cards share the same height */
+}
+@media (max-width: 720px) {
+  .tt-controls { grid-template-columns: 1fr; }
+}
+
+.tt-group {
+  margin: 0;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.tt-group-head {
+  padding: 10px 16px;
+  background: var(--bg-elev2);
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.tt-group-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px;
+}
+
+/* Accent section labels (card heading + combobox group heading). */
+.tt-group-title,
+.tt-combo-group {
+  color: var(--accent-soft);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.tt-group-title { font-size: 13px; }
+
+.tt-field { display: flex; flex-direction: column; gap: 6px; min-width: 96px; }
+.tt-field--grow { flex: 1 1 140px; }
+.tt-field.is-disabled label { opacity: 0.45; }
+
+/* ============================================================ 4. Form controls */
+select, input[type="number"], input[type="text"] {
+  font: inherit;
+  font-size: 15px;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text);
+}
+select { width: 100%; cursor: pointer; }
+select:disabled, input:disabled { opacity: 0.5; cursor: not-allowed; }
+select:focus, input:focus { border-color: var(--accent-soft); }
+select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
+  outline: 2px solid var(--accent-soft);
+  outline-offset: 2px;
+}
+::placeholder { color: var(--text-dim); opacity: 0.7; }
+
+/* ============================================================ 5. Combobox / checkboxes / chips */
+.tt-combo { position: relative; }
+.tt-combo-input { width: 100%; }
+.tt-combo.is-disabled .tt-combo-input { opacity: 0.5; cursor: not-allowed; }
+.tt-combo-list {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--bg-elev2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+}
+.tt-combo-group { font-size: 12px; padding: 8px 8px 4px; }
+.tt-combo-item {
+  padding: 7px 10px;
+  border-radius: var(--radius-xs);
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+.tt-combo-item.is-active { background: var(--accent); color: #fff; }
+.tt-combo-item.is-selected { font-weight: 700; }
+.tt-combo-item.is-selected::after { content: ' ✓'; color: var(--accent-soft); }
+.tt-combo-item.is-active.is-selected::after { color: #fff; }
+.tt-combo-empty { padding: 10px; color: var(--text-dim); font-size: 14px; }
+
+.tt-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+}
+.tt-check--full { flex: 1 1 100%; margin-top: 2px; }
+.tt-check input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+.tt-check input:disabled { cursor: not-allowed; }
+.tt-check:has(input:disabled) { opacity: 0.45; cursor: not-allowed; }
+
+/* Recommended-chord quick-picks. */
+.tt-reco {
+  flex: 1 1 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.tt-reco-label { margin-right: 2px; }
+.tt-reco-chip {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 11px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elev2);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.tt-reco-chip:hover { border-color: var(--accent-soft); }
+.tt-reco-chip.is-primary { border-color: var(--accent-soft); color: var(--accent-soft); }
+.tt-reco-chip.is-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: var(--accent-glow);
+}
+
+/* Constituent-note readout in the cards. */
+.tt-notes {
+  flex: 1 1 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.tt-notes-label { margin-right: 2px; }
+.tt-note-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-input);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.tt-note-deg { font-size: 11px; font-weight: 600; color: var(--accent-soft); }
+
+.tt-desc {
+  flex: 1 1 100%;
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+/* ============================================================ 6. Preview toolbar + actions */
+.tt-preview-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 20px 0 12px;
+}
+.tt-preview-bar__left { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px; }
+.tt-preview-bar__right { display: flex; align-items: flex-end; gap: 10px; }
+.tt-tool { display: flex; flex-direction: column; gap: 6px; }
+.tt-range-inputs { display: flex; align-items: center; gap: 8px; color: var(--text-dim); }
+.tt-range-inputs input { width: 64px; }
+
+/* Pill segmented control. */
+.tt-segments {
+  display: inline-flex;
+  padding: 2px;
+  gap: 2px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+.tt-segment {
+  position: relative;
+  padding: 6px 13px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.tt-segment input { position: absolute; opacity: 0; pointer-events: none; }
+.tt-segment:hover:not(:has(input:checked)) { color: var(--text); }
+.tt-segment:has(input:checked) { background: var(--accent); color: #fff; }
+.tt-segment:has(input:focus-visible) { outline: 2px solid var(--accent-soft); outline-offset: 2px; }
+
+.tt-btn {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 11px 20px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: var(--accent-glow);
+  transition: background 0.15s, border-color 0.15s, transform 0.05s;
+}
+.tt-btn:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+.tt-btn:active { transform: translateY(1px); }
+.tt-btn:focus-visible { outline: 2px solid var(--accent-soft); outline-offset: 3px; }
+.tt-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+.tt-btn--ghost {
+  background: var(--bg-elev2);
+  border-color: var(--border);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: none;
+}
+.tt-btn--ghost:hover { border-color: var(--accent-soft); }
+.tt-btn:disabled:hover { background: var(--bg-elev2); border-color: var(--border); }
+
+.tt-error {
+  padding: 12px 14px;
+  border: 1px solid rgba(248, 113, 113, 0.65);
+  border-radius: var(--radius-sm);
+  background: rgba(248, 113, 113, 0.1);
+  color: var(--danger);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ============================================================ 7. Sheet + fretboard + legend */
+.tt-sheet {
+  padding: 24px;
+  background: var(--paper);
+  color: var(--paper-ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+/* On screen, show the preview at A4 landscape proportion (full content width). */
+@media screen {
+  .tt-sheet--main { width: 100%; aspect-ratio: 297 / 210; overflow: auto; }
+}
+.tt-sheet-title { margin: 0 0 12px; font-size: 22px; color: var(--paper-ink); letter-spacing: -0.01em; }
+
+.tt-board { overflow-x: auto; }
+.tt-fretboard { display: block; width: 100%; height: auto; min-width: 640px; }
+
+/* Fretboard primitives. */
+.tt-string { stroke: #9aa3af; stroke-width: 1.4; }
+.tt-fret { stroke: #c4cad3; stroke-width: 1.4; }
+.tt-nut { stroke: var(--paper-ink); stroke-width: 5; }
+.tt-fretnum { fill: var(--paper-dim); font-size: 13px; }
+.tt-stringlabel { fill: var(--paper-dim); font-size: 13px; font-weight: 600; }
+
+/* Note markers (palette from the variables above). */
+.tt-note .tt-shape { stroke: var(--note-stroke); stroke-width: 1.6; }
+.tt-note .tt-label { font-size: 14px; font-weight: 700; pointer-events: none; }
+.tt-note .tt-label-main { font-size: 13px; }
+.tt-note .tt-label-sub { font-size: 11px; font-weight: 600; }
+
+/* Circle outline = a darker shade of each note's own fill. The rings below
+   keep the independent dark --note-stroke. */
+.tt-scale .tt-shape { fill: var(--note-scale); stroke: var(--note-scale-stroke); }
+.tt-scale .tt-label { fill: var(--note-scale-fg); }
+.tt-chordtone .tt-shape { fill: var(--note-chord); stroke: var(--note-chord-stroke); }
+.tt-chordtone .tt-label { fill: var(--note-chord-fg); }
+.tt-root .tt-shape { fill: var(--note-root); stroke: var(--note-root-stroke); }
+.tt-root .tt-label { fill: var(--note-root-fg); }
+
+/* Guide tones: same fill as chord tones, distinguished by the outer ring. */
+.tt-guide .tt-shape { fill: var(--note-guide); stroke: var(--note-chord-stroke); }
+.tt-guide .tt-label { fill: var(--note-guide-fg); }
+.tt-guide .tt-ring { fill: none; stroke: var(--note-stroke); stroke-width: 1.4; }
+
+/* Chord tone outside the current scale: distinct fill + dashed ring. */
+.tt-out .tt-shape { fill: var(--note-out); stroke: var(--note-out-stroke); }
+.tt-out .tt-label { fill: var(--note-out-fg); }
+.tt-ring--out { fill: none; stroke: var(--note-stroke); stroke-width: 1.4; stroke-dasharray: 3 2.4; }
+
+.tt-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 30px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--paper-dim);
+}
+.tt-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.tt-swatch {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1.6px solid var(--paper-ink);
+  border-radius: 50%;
+}
+.tt-swatch--root { background: var(--note-root); border-radius: 3px; }
+.tt-swatch--guide { background: var(--note-guide); box-shadow: 0 0 0 1px var(--paper), 0 0 0 2.5px var(--note-stroke); }
+.tt-swatch--chordtone { background: var(--note-chord); }
+.tt-swatch--scale { background: var(--note-scale); }
+.tt-swatch--out { background: var(--note-out); border-style: dashed; }
+
+/* Sheet detail: scale / chord columns (name + formula + notes + description). */
+.tt-sheet-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 44px;
+  margin-top: 16px;
+}
+@media (max-width: 560px) {
+  .tt-sheet-info { grid-template-columns: 1fr; }
+}
+.tt-info-col { display: flex; flex-direction: column; gap: 5px; }
+.tt-info-head {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--paper-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.tt-info-name { font-size: 16px; font-weight: 700; color: var(--paper-ink); }
+.tt-info-formula { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; color: var(--paper-dim); }
+.tt-info-notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--paper-ink);
+}
+.tt-info-deg { font-size: 12px; font-weight: 600; color: var(--paper-dim); }
+.tt-info-desc { font-size: 13px; line-height: 1.6; color: var(--paper-dim); }
+
+/* ============================================================ 8. Monochrome palette + toast */
+/* No hue: hierarchy from a black→grey→white gradient, with a ring on guide
+   tones and a hollow + dashed fill on out-of-scale tones. */
+.tt-mono {
+  --note-stroke: #000;
+  --note-root: #000;     --note-root-fg: #fff;  --note-root-stroke: #000;  /* darkest: root */
+  --note-guide: #000;    --note-guide-fg: #fff; /* black + ring: guide 3rd/7th */
+  --note-chord: #595959; --note-chord-fg: #fff; --note-chord-stroke: #000; /* mid grey: chord tone */
+  --note-scale: #dcdcdc; --note-scale-fg: #000; --note-scale-stroke: #000; /* light grey: scale note */
+  --note-out: #ffffff;   --note-out-fg: #000;   --note-out-stroke: #000;   /* white + dashed: outside scale */
+}
+.tt-mono .tt-string { stroke: #000; }
+.tt-mono .tt-fret { stroke: #888; }
+.tt-mono .tt-nut { stroke: #000; }
+.tt-mono .tt-fretnum, .tt-mono .tt-stringlabel { fill: #000; }
+
+.tt-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  padding: 10px 18px;
+  background: var(--bg-elev2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 14px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.tt-toast.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }

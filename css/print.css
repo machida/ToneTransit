@@ -1,0 +1,35 @@
+/* print.css — print layout. Loaded with media="print".
+ *
+ * Page setup + hides on-screen chrome. The colour vs. monochrome look is driven
+ * by the `.tt-mono` class (see app.css), so printing follows the preview toggle.
+ */
+
+@page {
+  size: A4 landscape;
+  margin: 12mm;
+}
+
+@media print {
+  body { background: #fff; }
+
+  /* Hide everything that is not part of the sheet. */
+  .tt-header,
+  .tt-controls,
+  .tt-preview-bar,
+  .tt-error,
+  .tt-toast,
+  .tt-legend { display: none !important; }
+
+  .tt-main { max-width: none; margin: 0; padding: 0; }
+
+  .tt-sheet {
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    background: #fff;
+    break-inside: avoid;
+  }
+  .tt-sheet-title { font-size: 18pt; }
+
+  .tt-fretboard { min-width: 0; max-width: 100%; }
+}

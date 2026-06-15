@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToneTransit</title>
+  <meta name="description" content="スケールとコードの関係を指板上で可視化するツール">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
+</head>
+<body>
+  <header class="tt-header">
+    <div class="tt-brand">
+      <h1>Tone<span class="tt-accent">Transit</span></h1>
+      <p>その音が、今どんな意味を持つのか。</p>
+    </div>
+  </header>
+
+  <main class="tt-main">
+    <section class="tt-controls" aria-label="設定">
+      <section class="tt-group">
+        <div class="tt-group-head"><h3 class="tt-group-title">スケール</h3></div>
+        <div class="tt-group-body">
+          <div class="tt-field" id="scaleRootField">
+            <label for="scaleRoot">ルート</label>
+            <select id="scaleRoot"></select>
+          </div>
+          <div class="tt-field tt-field--grow">
+            <label for="scaleSearch">スケール</label>
+            <div class="tt-combo" id="scaleCombo">
+              <input type="text" id="scaleSearch" class="tt-combo-input" role="combobox"
+                     aria-expanded="false" aria-controls="scaleList" aria-autocomplete="list"
+                     autocomplete="off" spellcheck="false" placeholder="検索（例: ドリアン / lydian）">
+              <ul class="tt-combo-list" id="scaleList" role="listbox" hidden></ul>
+            </div>
+          </div>
+          <label class="tt-check tt-check--full">
+            <input type="checkbox" id="noScale"> スケールなし（コードトーンのみ表示）
+          </label>
+          <div class="tt-notes" id="scaleNotes" aria-label="スケール構成音"></div>
+          <p class="tt-desc" id="scaleDesc"></p>
+        </div>
+      </section>
+
+      <section class="tt-group">
+        <div class="tt-group-head"><h3 class="tt-group-title">コード</h3></div>
+        <div class="tt-group-body">
+          <div class="tt-field" id="chordRootField">
+            <label for="chordRoot">ルート</label>
+            <select id="chordRoot"></select>
+          </div>
+          <div class="tt-field tt-field--grow" id="chordTypeField">
+            <label for="chord">種類</label>
+            <select id="chord"></select>
+          </div>
+          <label class="tt-check tt-check--full">
+            <input type="checkbox" id="noChord"> コードなし（スケールのみ表示）
+          </label>
+          <div class="tt-reco" id="chordReco" aria-label="おすすめコード"></div>
+          <div class="tt-notes" id="chordNotes" aria-label="コード構成音"></div>
+          <p class="tt-desc" id="chordDesc"></p>
+        </div>
+      </section>
+
+    </section>
+
+    <p id="dataError" class="tt-error" hidden></p>
+
+    <!-- Toolbar above the preview: display options (left) + actions (right) -->
+    <div class="tt-preview-bar">
+      <div class="tt-preview-bar__left">
+        <div class="tt-tool">
+          <span class="tt-tool-label">表示（ラベル）</span>
+          <div class="tt-segments" role="radiogroup" aria-label="表示（ラベル）">
+            <label class="tt-segment"><input type="radio" name="displayMode" value="name">音名</label>
+            <label class="tt-segment"><input type="radio" name="displayMode" value="degree">度数</label>
+            <label class="tt-segment"><input type="radio" name="displayMode" value="name-degree">音名＋度数</label>
+          </div>
+        </div>
+        <div class="tt-tool">
+          <span class="tt-tool-label">フレット範囲</span>
+          <div class="tt-range-inputs">
+            <input type="number" id="fretStart" min="0" max="24" inputmode="numeric">
+            <span>–</span>
+            <input type="number" id="fretEnd" min="0" max="24" inputmode="numeric">
+          </div>
+        </div>
+        <div class="tt-tool">
+          <span class="tt-tool-label">配色</span>
+          <div class="tt-segments" role="radiogroup" aria-label="配色">
+            <label class="tt-segment"><input type="radio" name="palette" value="color">カラー</label>
+            <label class="tt-segment"><input type="radio" name="palette" value="mono">モノトーン</label>
+          </div>
+        </div>
+      </div>
+      <div class="tt-preview-bar__right">
+        <button type="button" id="printBtn" class="tt-btn">印刷 / PDF</button>
+        <button type="button" id="shareBtn" class="tt-btn tt-btn--ghost">共有リンク</button>
+      </div>
+    </div>
+
+    <!-- Printable single sheet (also the on-screen diagram) -->
+    <section class="tt-sheet tt-sheet--main">
+      <h2 class="tt-sheet-title" id="sheetTitle"></h2>
+      <div class="tt-board" id="board"></div>
+
+      <div class="tt-legend" aria-label="凡例">
+        <span class="tt-legend-item"><span class="tt-swatch tt-swatch--root"></span>ルート (1)</span>
+        <span class="tt-legend-item"><span class="tt-swatch tt-swatch--guide"></span>ガイドトーン (3rd / 7th)</span>
+        <span class="tt-legend-item"><span class="tt-swatch tt-swatch--chordtone"></span>コードトーン</span>
+        <span class="tt-legend-item"><span class="tt-swatch tt-swatch--scale"></span>スケール音 / テンション</span>
+        <span class="tt-legend-item"><span class="tt-swatch tt-swatch--out"></span>コードトーン（スケール外）</span>
+      </div>
+
+      <div class="tt-sheet-info" id="sheetInfo"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="tt-toast" role="status" aria-live="polite"></div>
+
+  <script src="js/music-theory.js"></script>
+  <script src="js/fretboard.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

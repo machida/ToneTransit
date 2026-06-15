@@ -1,0 +1,478 @@
+{
+  "6": {
+    "name": "Major 6",
+    "symbol": "6",
+    "description": "長三和音＋6度の明るく軽やかな響き。スウィングや古典的なエンディングに。",
+    "intervals": [
+      0,
+      4,
+      7,
+      9
+    ],
+    "degrees": [
+      "1",
+      "3",
+      "5",
+      "6"
+    ],
+    "aliases": [
+      "6",
+      "maj6",
+      "M6"
+    ]
+  },
+  "7": {
+    "name": "Dominant 7",
+    "symbol": "7",
+    "description": "長3度＋短7度のドミナント。解決を求める推進力で、ブルース/ジャズの要。",
+    "intervals": [
+      0,
+      4,
+      7,
+      10
+    ],
+    "degrees": [
+      "1",
+      "3",
+      "5",
+      "♭7"
+    ],
+    "aliases": [
+      "7",
+      "dom7"
+    ]
+  },
+  "9": {
+    "name": "Dominant 9",
+    "symbol": "9",
+    "description": "ドミナント7th＋9度の厚み。ファンク/ブルースのキメに。",
+    "intervals": [
+      0,
+      4,
+      7,
+      10,
+      14
+    ],
+    "degrees": [
+      "1",
+      "3",
+      "5",
+      "♭7",
+      "9"
+    ],
+    "aliases": [
+      "9",
+      "dom9"
+    ]
+  },
+  "13": {
+    "name": "Dominant 13",
+    "symbol": "13",
+    "description": "ドミナント7th＋9・13度のフルで豊かな響き。ビッグバンドやファンクのドミナントに。",
+    "intervals": [
+      0,
+      4,
+      7,
+      10,
+      14,
+      21
+    ],
+    "degrees": [
+      "1",
+      "3",
+      "5",
+      "♭7",
+      "9",
+      "13"
+    ],
+    "aliases": [
+      "13",
+      "dom13"
+    ]
+  },
+  "maj": {
+    "name": "Major Triad",
+    "symbol": "",
+    "description": "明るく安定した長三和音。あらゆる音楽のトニックの基本。",
+    "intervals": [
+      0,
+      4,
+      7
+    ],
+    "degrees": [
+      "1",
+      "3",
+      "5"
+    ],
+    "aliases": [
+      "maj",
+      "M",
+      ""
+    ]
+  },
+  "m": {
+    "name": "Minor Triad",
+    "symbol": "m",
+    "description": "暗く落ち着いた短三和音。マイナーキーの中心。",
+    "intervals": [
+      0,
+      3,
+      7
+    ],
+    "degrees": [
+      "1",
+      "♭3",
+      "5"
+    ],
+    "aliases": [
+      "m",
+      "min",
+      "-"
+    ]
+  },
+  "aug": {
+    "name": "Augmented",
+    "symbol": "aug",
+    "description": "増5度の不安定な三和音。ドミナントの代理や経過、劇的な場面に。",
+    "intervals": [
+      0,
+      4,
+      8
+    ],
+    "degrees": [
+      "1",
+      "3",
+      "♯5"
+    ],
+    "aliases": [
+      "aug",
+      "+",
+      "+5",
+      "#5"
+    ]
+  },
+  "sus4": {
+    "name": "Suspended 4",
+    "symbol": "sus4",
+    "description": "3度を4度に置換し解決を保留。ロックの浮遊感やドミナントの飾りに。",
+    "intervals": [
+      0,
+      5,
+      7
+    ],
+    "degrees": [
+      "1",
+      "4",
+      "5"
+    ],
+    "aliases": [
+      "sus4",
+      "sus"
+    ]
+  },
+  "m6": {
+    "name": "Minor 6",
+    "symbol": "m6",
+    "description": "短三和音＋長6度。ドリアン/メロディックマイナーの洗練された短和音。",
+    "intervals": [
+      0,
+      3,
+      7,
+      9
+    ],
+    "degrees": [
+      "1",
+      "♭3",
+      "5",
+      "6"
+    ],
+    "aliases": [
+      "m6",
+      "min6",
+      "-6"
+    ]
+  },
+  "6/9": {
+    "name": "Six-Nine",
+    "symbol": "6/9",
+    "description": "6度と9度を加えた開放的でモダンな響き。締めのトニックに。",
+    "intervals": [
+      0,
+      4,
+      7,
+      9,
+      14
+    ],
+    "degrees": [
+      "1",
+      "3",
+      "5",
+      "6",
+      "9"
+    ],
+    "aliases": [
+      "6/9",
+      "69",
+      "6add9"
+    ]
+  },
+  "add9": {
+    "name": "Add 9",
+    "symbol": "add9",
+    "description": "三和音に9度を足したきらびやかな広がり。ポップス/ロックのコードに。",
+    "intervals": [
+      0,
+      4,
+      7,
+      14
+    ],
+    "degrees": [
+      "1",
+      "3",
+      "5",
+      "9"
+    ],
+    "aliases": [
+      "add9",
+      "add2"
+    ]
+  },
+  "maj7": {
+    "name": "Major 7",
+    "symbol": "maj7",
+    "description": "長3度＋長7度の洗練された和音。ジャズのIやボサノヴァ、シティポップの定番。",
+    "intervals": [
+      0,
+      4,
+      7,
+      11
+    ],
+    "degrees": [
+      "1",
+      "3",
+      "5",
+      "7"
+    ],
+    "aliases": [
+      "maj7",
+      "M7",
+      "Maj7",
+      "△7",
+      "△"
+    ]
+  },
+  "m7": {
+    "name": "Minor 7",
+    "symbol": "m7",
+    "description": "短3度＋短7度の柔らかな和音。ジャズ/ソウル/ファンクのiiやトニックに。",
+    "intervals": [
+      0,
+      3,
+      7,
+      10
+    ],
+    "degrees": [
+      "1",
+      "♭3",
+      "5",
+      "♭7"
+    ],
+    "aliases": [
+      "m7",
+      "min7",
+      "-7"
+    ]
+  },
+  "mMaj7": {
+    "name": "Minor Major 7",
+    "symbol": "mMaj7",
+    "description": "短3度＋長7度の緊張感ある和音。メロディック/ハーモニックマイナーのトニックやミステリアスな場面に。",
+    "intervals": [
+      0,
+      3,
+      7,
+      11
+    ],
+    "degrees": [
+      "1",
+      "♭3",
+      "5",
+      "7"
+    ],
+    "aliases": [
+      "mMaj7",
+      "mM7",
+      "m(maj7)",
+      "minMaj7",
+      "-M7"
+    ]
+  },
+  "m7b5": {
+    "name": "Minor 7 ♭5",
+    "symbol": "m7♭5",
+    "description": "ハーフディミニッシュ。短調のii(II–V)で頻出。",
+    "intervals": [
+      0,
+      3,
+      6,
+      10
+    ],
+    "degrees": [
+      "1",
+      "♭3",
+      "♭5",
+      "♭7"
+    ],
+    "aliases": [
+      "m7b5",
+      "m7-5",
+      "ø",
+      "ø7",
+      "min7b5"
+    ]
+  },
+  "dim": {
+    "name": "Diminished 7",
+    "symbol": "dim7",
+    "description": "減七和音。強い緊張で経過和音や代理ドミナントに。",
+    "intervals": [
+      0,
+      3,
+      6,
+      9
+    ],
+    "degrees": [
+      "1",
+      "♭3",
+      "♭5",
+      "♭♭7"
+    ],
+    "aliases": [
+      "dim",
+      "dim7",
+      "o",
+      "o7",
+      "°",
+      "°7"
+    ]
+  },
+  "maj7#5": {
+    "name": "Augmented Major 7",
+    "symbol": "maj7♯5",
+    "description": "長7度＋増5度。リディアン・オーグメントの浮遊した響き。",
+    "intervals": [
+      0,
+      4,
+      8,
+      11
+    ],
+    "degrees": [
+      "1",
+      "3",
+      "♯5",
+      "7"
+    ],
+    "aliases": [
+      "maj7#5",
+      "maj7♯5",
+      "M7#5",
+      "augMaj7",
+      "+M7"
+    ]
+  },
+  "7sus4": {
+    "name": "Dominant 7 sus4",
+    "symbol": "7sus4",
+    "description": "ドミナント7thの3度を4度に。モーダルやソウルの落ち着いたドミナントに。",
+    "intervals": [
+      0,
+      5,
+      7,
+      10
+    ],
+    "degrees": [
+      "1",
+      "4",
+      "5",
+      "♭7"
+    ],
+    "aliases": [
+      "7sus4",
+      "7sus"
+    ]
+  },
+  "m9": {
+    "name": "Minor 9",
+    "symbol": "m9",
+    "description": "短7和音＋9度の滑らかで都会的な響き。ソウル/ネオソウルに。",
+    "intervals": [
+      0,
+      3,
+      7,
+      10,
+      14
+    ],
+    "degrees": [
+      "1",
+      "♭3",
+      "5",
+      "♭7",
+      "9"
+    ],
+    "aliases": [
+      "m9",
+      "min9",
+      "-9"
+    ]
+  },
+  "maj9": {
+    "name": "Major 9",
+    "symbol": "maj9",
+    "description": "メジャー7th＋9度の明るく広がる響き。シティポップ/ボサノヴァに。",
+    "intervals": [
+      0,
+      4,
+      7,
+      11,
+      14
+    ],
+    "degrees": [
+      "1",
+      "3",
+      "5",
+      "7",
+      "9"
+    ],
+    "aliases": [
+      "maj9",
+      "M9",
+      "△9"
+    ]
+  },
+  "m11": {
+    "name": "Minor 11",
+    "symbol": "m11",
+    "description": "短9和音＋11度の開放的でモーダルな響き。フュージョン/ソウルに。",
+    "intervals": [
+      0,
+      3,
+      7,
+      10,
+      14,
+      17
+    ],
+    "degrees": [
+      "1",
+      "♭3",
+      "5",
+      "♭7",
+      "9",
+      "11"
+    ],
+    "aliases": [
+      "m11",
+      "min11",
+      "-11"
+    ]
+  }
+}
