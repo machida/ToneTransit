@@ -62,24 +62,11 @@
     };
   }
 
-  // Parses a full progression like "Dm7 | G7 | Cmaj7".
-  function parseProgression(text, chords) {
-    if (!text) return [];
-    return String(text)
-      .split(/[|,\n]/)
-      .map(function (s) { return s.trim(); })
-      .filter(Boolean)
-      .map(function (s) { return parseChordSymbol(s, chords); })
-      .filter(Boolean);
-  }
-
   // Builds the diagram model for the current state.
   function buildModel(state, data) {
     var scale = data.scales[state.scaleKey];
     var noScale = !!state.noScale;
-    // A progression always supplies a chord, so it wins over the no-chord flag.
-    var inProgression = !!(state.progression && state.progression.length);
-    var noChord = (!!state.noChord && !inProgression) || !data.chords[state.chordKey];
+    var noChord = !!state.noChord || !data.chords[state.chordKey];
     var chord = noChord ? null : data.chords[state.chordKey];
     // Note spelling follows the scale root normally; with no scale there is no
     // key, so it follows the chord root instead.
@@ -163,7 +150,6 @@
   TT.fretboard = {
     TUNING: TUNING,
     parseChordSymbol: parseChordSymbol,
-    parseProgression: parseProgression,
     buildModel: buildModel
   };
 })(typeof window !== 'undefined' ? window : this);

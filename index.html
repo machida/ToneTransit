@@ -19,6 +19,7 @@
   </header>
 
   <main class="tt-main">
+    <p class="tt-intro">スケールとコードを選ぶと、各音が「今のコードに対して何度か」を指板上に表示します。</p>
     <section class="tt-controls" aria-label="設定">
       <section class="tt-group">
         <div class="tt-group-head"><h3 class="tt-group-title">スケール</h3></div>
@@ -39,6 +40,7 @@
           <label class="tt-check tt-check--full">
             <input type="checkbox" id="noScale"> スケールなし（コードトーンのみ表示）
           </label>
+          <p class="tt-hint" id="scaleHint" hidden>音名の綴りはコードのルート基準で表示します。</p>
           <div class="tt-notes" id="scaleNotes" aria-label="スケール構成音"></div>
           <p class="tt-desc" id="scaleDesc"></p>
         </div>
@@ -48,7 +50,7 @@
         <div class="tt-group-head"><h3 class="tt-group-title">コード</h3></div>
         <div class="tt-group-body">
           <div class="tt-field" id="chordRootField">
-            <label for="chordRoot">ルート</label>
+            <label for="chordRoot">コードルート</label>
             <select id="chordRoot"></select>
           </div>
           <div class="tt-field tt-field--grow" id="chordTypeField">
@@ -72,8 +74,8 @@
     <div class="tt-preview-bar">
       <div class="tt-preview-bar__left">
         <div class="tt-tool">
-          <span class="tt-tool-label">表示（ラベル）</span>
-          <div class="tt-segments" role="radiogroup" aria-label="表示（ラベル）">
+          <span class="tt-tool-label">表記</span>
+          <div class="tt-segments" role="radiogroup" aria-label="音符の表記">
             <label class="tt-segment"><input type="radio" name="displayMode" value="name">音名</label>
             <label class="tt-segment"><input type="radio" name="displayMode" value="degree">度数</label>
             <label class="tt-segment"><input type="radio" name="displayMode" value="name-degree">音名＋度数</label>
@@ -82,9 +84,9 @@
         <div class="tt-tool">
           <span class="tt-tool-label">フレット範囲</span>
           <div class="tt-range-inputs">
-            <input type="number" id="fretStart" min="0" max="24" inputmode="numeric">
-            <span>–</span>
-            <input type="number" id="fretEnd" min="0" max="24" inputmode="numeric">
+            <input type="number" id="fretStart" min="0" max="24" inputmode="numeric" aria-label="開始フレット">
+            <span aria-hidden="true">–</span>
+            <input type="number" id="fretEnd" min="0" max="24" inputmode="numeric" aria-label="終了フレット">
           </div>
         </div>
         <div class="tt-tool">
@@ -97,7 +99,7 @@
       </div>
       <div class="tt-preview-bar__right">
         <button type="button" id="printBtn" class="tt-btn">印刷 / PDF</button>
-        <button type="button" id="shareBtn" class="tt-btn tt-btn--ghost">共有リンク</button>
+        <button type="button" id="shareBtn" class="tt-btn tt-btn--ghost">リンクをコピー</button>
       </div>
     </div>
 

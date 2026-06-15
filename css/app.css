@@ -49,7 +49,7 @@
   --note-chord: #2563eb;  --note-chord-fg: #ffffff; --note-chord-stroke: #1e40af; /* chord tone (blue) */
   --note-guide: var(--note-chord); --note-guide-fg: var(--note-chord-fg); /* guide = chord colour; ring marks it */
   --note-scale: #e7ebf1;  --note-scale-fg: #1f2733; --note-scale-stroke: #9aa6b6; /* scale note (light) */
-  --note-out: #a9c4ef;    --note-out-fg: #1f2733;   --note-out-stroke: #5e82c0;  /* chord tone outside scale */
+  --note-out: #f4cf8f;    --note-out-fg: #1f2733;   --note-out-stroke: #c0902f;  /* chord tone outside scale (amber = mismatch) */
 
   color-scheme: dark;
 }
@@ -104,6 +104,7 @@ h1, h2, h3 { margin: 0; font-weight: 800; letter-spacing: -0.02em; line-height: 
   margin: 0 auto;
   padding: 22px 24px 64px;
 }
+.tt-intro { margin: 0 0 16px; color: var(--text-dim); font-size: 14px; line-height: 1.5; }
 
 /* ============================================================ 3. Control cards */
 .tt-controls {
@@ -247,6 +248,7 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
   border-color: var(--accent);
   box-shadow: var(--accent-glow);
 }
+.tt-reco-note { flex: 1 1 100%; margin-top: 2px; font-size: 11px; color: var(--text-dim); }
 
 /* Constituent-note readout in the cards. */
 .tt-notes {
@@ -278,6 +280,13 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
   line-height: 1.55;
   color: var(--text-dim);
 }
+.tt-hint {
+  flex: 1 1 100%;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--accent-soft);
+}
 
 /* ============================================================ 6. Preview toolbar + actions */
 .tt-preview-bar {
@@ -286,13 +295,38 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
   align-items: flex-end;
   justify-content: space-between;
   gap: 14px;
-  margin: 20px 0 12px;
+  margin: 16px 0 12px;
+  padding: 14px 16px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 .tt-preview-bar__left { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px; }
 .tt-preview-bar__right { display: flex; align-items: flex-end; gap: 10px; }
 .tt-tool { display: flex; flex-direction: column; gap: 6px; }
-.tt-range-inputs { display: flex; align-items: center; gap: 8px; color: var(--text-dim); }
-.tt-range-inputs input { width: 64px; }
+/* Range inputs styled to match the pill segmented controls beside them. */
+.tt-range-inputs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-dim);
+}
+.tt-range-inputs input {
+  width: 40px;
+  padding: 6px 2px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 15px;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+.tt-range-inputs input::-webkit-outer-spin-button,
+.tt-range-inputs input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
 /* Pill segmented control. */
 .tt-segments {
@@ -373,6 +407,7 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 .tt-sheet-title { margin: 0 0 12px; font-size: 22px; color: var(--paper-ink); letter-spacing: -0.01em; }
 
 .tt-board { overflow-x: auto; }
+.tt-empty { margin: 0; padding: 40px 8px; color: var(--paper-dim); font-size: 15px; text-align: center; }
 .tt-fretboard { display: block; width: 100%; height: auto; min-width: 640px; }
 
 /* Fretboard primitives. */
@@ -400,7 +435,7 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 /* Guide tones: same fill as chord tones, distinguished by the outer ring. */
 .tt-guide .tt-shape { fill: var(--note-guide); stroke: var(--note-chord-stroke); }
 .tt-guide .tt-label { fill: var(--note-guide-fg); }
-.tt-guide .tt-ring { fill: none; stroke: var(--note-stroke); stroke-width: 1.4; }
+.tt-guide .tt-ring { fill: none; stroke: var(--note-stroke); stroke-width: 2; }
 
 /* Chord tone outside the current scale: distinct fill + dashed ring. */
 .tt-out .tt-shape { fill: var(--note-out); stroke: var(--note-out-stroke); }

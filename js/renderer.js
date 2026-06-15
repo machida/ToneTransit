@@ -39,7 +39,8 @@
     return node;
   }
 
-  function render(model) {
+  function render(model, ariaLabel) {
+    var label = ariaLabel || '指板図';
     var nStrings = model.strings.length;
     var firstFret = model.fretStart;
 
@@ -59,8 +60,10 @@
       xmlns: SVG_NS,
       viewBox: '0 0 ' + width + ' ' + height,
       class: 'tt-fretboard',
-      role: 'img'
+      role: 'img',
+      'aria-label': label
     });
+    svg.appendChild(el('title', {}, label)); // screen-reader description
 
     function stringY(s) { return L.padTop + s * L.stringGap; }
     function openX() { return L.padLeft + openZone / 2; }

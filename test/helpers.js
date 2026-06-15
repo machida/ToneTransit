@@ -35,8 +35,7 @@ function makeState(overrides) {
     noScale: false,
     fretStart: 0,
     fretEnd: 12,
-    displayMode: 'name-degree',
-    progression: []
+    displayMode: 'name-degree'
   }, overrides || {});
 }
 

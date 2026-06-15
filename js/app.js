@@ -108,7 +108,7 @@
   function cacheEls() {
     [
       'scaleRoot', 'scaleRootField', 'scaleCombo', 'scaleSearch', 'scaleList', 'noScale', 'scaleNotes',
-      'scaleDesc',
+      'scaleDesc', 'scaleHint',
       'chordRoot', 'chordRootField', 'chord', 'chordTypeField', 'noChord', 'chordReco', 'chordNotes',
       'fretStart', 'fretEnd',
       'chordDesc',
@@ -116,15 +116,47 @@
     ].forEach(function (id) { els[id] = document.getElementById(id); });
   }
 
+  // Chord dropdown display order (integer-like keys like "7" can't keep object
+  // insertion order, so the order is fixed here; group labels come from data).
+  var CHORD_ORDER = [
+    'maj', 'm', 'aug', 'sus4',
+    '6', 'm6', '6/9',
+    'maj7', 'm7', '7', 'mMaj7', 'm7b5', 'dim', 'maj7#5', '7sus4',
+    'add9', '9', 'm9', 'maj9', 'm11', '13'
+  ];
+
   function populateSelects() {
     fillOptions(els.scaleRoot, theory.ROOTS, theory.ROOTS, state.scaleRoot);
     fillOptions(els.chordRoot, theory.ROOTS, theory.ROOTS, state.chordRoot);
+    fillChordOptions(els.chord, data.chords, state.chordKey);
+  }
 
-    var chordKeys = Object.keys(data.chords);
-    fillOptions(els.chord, chordKeys, chordKeys.map(function (k) {
-      var c = data.chords[k];
-      return c.name + (c.symbol ? '  (' + c.symbol + ')' : '');
-    }), state.chordKey);
+  // Builds the chord <select> grouped into <optgroup> by each chord's `group`,
+  // in CHORD_ORDER (unlisted chords fall into "その他" at the end).
+  function fillChordOptions(select, chords, selected) {
+    select.innerHTML = '';
+    var keys = CHORD_ORDER.filter(function (k) { return chords[k]; })
+      .concat(Object.keys(chords).filter(function (k) { return CHORD_ORDER.indexOf(k) < 0; }));
+    var groups = {};
+    var order = [];
+    keys.forEach(function (key) {
+      var g = chords[key].group || 'その他';
+      if (!groups[g]) { groups[g] = []; order.push(g); }
+      groups[g].push(key);
+    });
+    order.forEach(function (g) {
+      var og = document.createElement('optgroup');
+      og.label = g;
+      groups[g].forEach(function (key) {
+        var c = chords[key];
+        var opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = c.name + (c.symbol ? '  (' + c.symbol + ')' : '');
+        if (key === selected) opt.selected = true;
+        og.appendChild(opt);
+      });
+      select.appendChild(og);
+    });
   }
 
   // ---- Scale combobox (incremental search, katakana-aware) ---------------
@@ -192,6 +224,7 @@
         var li = document.createElement('li');
         li.className = 'tt-combo-item' + (key === state.scaleKey ? ' is-selected' : '');
         li.setAttribute('role', 'option');
+        li.id = 'tt-opt-' + key;
         li.dataset.key = key;
         li.textContent = data.scales[key].name;
         li.addEventListener('mousedown', function (e) {
@@ -219,6 +252,9 @@
     if (li) {
       li.classList.add('is-active');
       li.scrollIntoView({ block: 'nearest' });
+      els.scaleSearch.setAttribute('aria-activedescendant', li.id);
+    } else {
+      els.scaleSearch.removeAttribute('aria-activedescendant');
     }
   }
 
@@ -232,6 +268,7 @@
   function closeScaleList(revert) {
     combo.open = false;
     els.scaleSearch.setAttribute('aria-expanded', 'false');
+    els.scaleSearch.removeAttribute('aria-activedescendant');
     els.scaleList.hidden = true;
     if (revert) els.scaleSearch.value = scaleName(state.scaleKey);
   }
@@ -340,6 +377,7 @@
     els.scaleCombo.classList.toggle('is-disabled', state.noScale);
     els.scaleRoot.disabled = state.noScale;
     els.scaleRootField.classList.toggle('is-disabled', state.noScale);
+    els.scaleHint.hidden = !state.noScale;
 
     // No chord → grey the chord pickers.
     els.chordRoot.disabled = state.noChord;
@@ -380,6 +418,13 @@
       });
       els.chordReco.appendChild(btn);
     });
+
+    if (recos.some(function (r) { return r.primary; })) {
+      var note = document.createElement('span');
+      note.className = 'tt-reco-note';
+      note.textContent = '★ = このスケールの中心コード';
+      els.chordReco.appendChild(note);
+    }
   }
 
   // Constituent-note readouts under the scale / chord cards.
@@ -482,7 +527,14 @@
     var model = fretboard.buildModel(state, data);
 
     els.board.innerHTML = '';
-    els.board.appendChild(renderer.render(model));
+    if (model.noScale && model.noChord) {
+      var empty = document.createElement('p');
+      empty.className = 'tt-empty';
+      empty.textContent = '表示する音がありません。スケールかコードを選んでください。';
+      els.board.appendChild(empty);
+    } else {
+      els.board.appendChild(renderer.render(model, titleFor(model) + ' の指板図'));
+    }
 
     els.sheetTitle.textContent = titleFor(model);
     els.sheetInfo.innerHTML = buildSheetInfo(state);

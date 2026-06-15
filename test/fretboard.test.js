@@ -37,16 +37,6 @@ test('parseChordSymbol rejects junk', () => {
   assert.equal(fretboard.parseChordSymbol('H7', data.chords), null);
 });
 
-test('parseProgression splits on | , and newlines, dropping invalid tokens', () => {
-  const prog = fretboard.parseProgression('Dm7 | G7 | Cmaj7', data.chords);
-  assert.deepEqual(prog.map((c) => c.symbol), ['Dm7', 'G7', 'Cmaj7']);
-  assert.deepEqual(prog.map((c) => c.chordKey), ['m7', '7', 'maj7']);
-
-  assert.equal(fretboard.parseProgression('Am7, D7\nGmaj7', data.chords).length, 3);
-  assert.equal(fretboard.parseProgression('G7 | ??? | C', data.chords).length, 2);
-  assert.equal(fretboard.parseProgression('', data.chords).length, 0);
-});
-
 // ---- buildModel: geometry ----
 
 test('buildModel returns 6 strings of the right length', () => {
@@ -171,17 +161,6 @@ test('guide tones stay flagged for highlighting (3rd & 7th over G7)', () => {
   assert.ok(guides.includes('B'));
   assert.ok(guides.includes('F'));
   assert.ok(!guides.includes('G')); // root is not a guide tone
-});
-
-// ---- buildModel: progression overrides the no-chord flag ----
-
-test('an active progression wins over the noChord flag', () => {
-  const prog = fretboard.parseProgression('Dm7 | G7', data.chords);
-  const m = fretboard.buildModel(makeState({
-    noChord: true, progression: prog, chordRoot: prog[0].root, chordKey: prog[0].chordKey
-  }), data);
-  assert.equal(m.noChord, false);
-  assert.equal(m.chordName, 'Dm7');
 });
 
 // ---- helper ----
