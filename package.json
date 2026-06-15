@@ -2,7 +2,7 @@
   "name": "tone-transit",
   "version": "1.0.0",
   "private": true,
-  "description": "スケールとコードの関係を指板上で可視化するツール",
+  "description": "スケールの各音が「今のコード」に対して何度かを指板上で可視化する、ギタリストのための練習ツール",
   "license": "MIT",
   "type": "commonjs",
   "scripts": {
