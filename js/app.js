@@ -16,6 +16,7 @@
   var STORAGE_KEY = 'tone-transit:state';
 
   var data = { scales: {}, chords: {} };
+  var audioOn = false; // Web Audio available (set in bindControls)
 
   // The single source of truth.
   var state = {
@@ -28,6 +29,10 @@
     fretEnd: 12,
     displayMode: 'name-degree', // label style: name | degree | name-degree
     palette: 'color',           // preview palette: color | mono
+    timbreScale: 'piano',       // audition timbres: piano | epiano | organ | simple
+    timbreChord: 'piano',
+    octaveScale: 4,             // audition octaves (C4 = 4)
+    octaveChord: 3,
     noScale: false
   };
 
@@ -43,6 +48,11 @@
     if (p.get('to')) state.fretEnd = parseInt(p.get('to'), 10) || 12;
     if (p.get('mode')) state.displayMode = p.get('mode');
     if (p.get('pal')) state.palette = p.get('pal');
+    if (p.get('tone')) { state.timbreScale = state.timbreChord = p.get('tone'); } // legacy single
+    if (p.get('toneS')) state.timbreScale = p.get('toneS');
+    if (p.get('toneC')) state.timbreChord = p.get('toneC');
+    if (p.get('octS')) state.octaveScale = parseInt(p.get('octS'), 10);
+    if (p.get('octC')) state.octaveChord = parseInt(p.get('octC'), 10);
     if (p.get('noscale')) state.noScale = p.get('noscale') === '1';
   }
 
@@ -54,6 +64,11 @@
       state.displayMode = 'name-degree';
     }
     if (['color', 'mono'].indexOf(state.palette) < 0) state.palette = 'color';
+    var timbres = ['piano', 'epiano', 'organ', 'simple'];
+    if (timbres.indexOf(state.timbreScale) < 0) state.timbreScale = 'piano';
+    if (timbres.indexOf(state.timbreChord) < 0) state.timbreChord = 'piano';
+    if ([3, 4, 5].indexOf(state.octaveScale) < 0) state.octaveScale = 4;
+    if ([3, 4, 5].indexOf(state.octaveChord) < 0) state.octaveChord = 3;
   }
 
   function readStorage() {
@@ -80,6 +95,10 @@
     p.set('to', state.fretEnd);
     p.set('mode', state.displayMode);
     if (state.palette === 'mono') p.set('pal', 'mono');
+    if (state.timbreScale !== 'piano') p.set('toneS', state.timbreScale);
+    if (state.timbreChord !== 'piano') p.set('toneC', state.timbreChord);
+    if (state.octaveScale !== 4) p.set('octS', state.octaveScale);
+    if (state.octaveChord !== 3) p.set('octC', state.octaveChord);
     if (state.noChord) p.set('nochord', '1');
     if (state.noScale) p.set('noscale', '1');
     global.history.replaceState(null, '', '?' + p.toString());
@@ -109,9 +128,9 @@
     [
       'scaleRoot', 'scaleRootField', 'scaleCombo', 'scaleSearch', 'scaleList', 'noScale', 'scaleNotes',
       'scaleDesc', 'scaleHint',
-      'chordRoot', 'chordRootField', 'chord', 'chordTypeField', 'noChord', 'chordReco', 'chordNotes',
+      'chordRoot', 'chordRootField', 'chord', 'chordTypeField', 'noChord', 'chordReco', 'chordNotes', 'chordDesc',
       'fretStart', 'fretEnd',
-      'chordDesc',
+      'auditionCard', 'auTimbreScale', 'auTimbreChord', 'auPlayScale', 'auPlayChord', 'auPlayMix',
       'board', 'sheetTitle', 'sheetInfo', 'dataError'
     ].forEach(function (id) { els[id] = document.getElementById(id); });
   }
@@ -384,6 +403,16 @@
     els.chord.disabled = state.noChord;
     els.chordRootField.classList.toggle('is-disabled', state.noChord);
     els.chordTypeField.classList.toggle('is-disabled', state.noChord);
+
+    if (audioOn) {
+      els.auTimbreScale.value = state.timbreScale;
+      els.auTimbreChord.value = state.timbreChord;
+      setRadio('scaleOctave', String(state.octaveScale));
+      setRadio('chordOctave', String(state.octaveChord));
+      els.auPlayScale.disabled = state.noScale;
+      els.auPlayChord.disabled = state.noChord;
+      els.auPlayMix.disabled = state.noScale || state.noChord; // needs both
+    }
   }
 
   // Recommended (diatonic) chords for the current scale, shown as quick-picks.
@@ -569,6 +598,37 @@
       global.print();
     });
     document.getElementById('shareBtn').addEventListener('click', copyShareLink);
+
+    // Audio audition (Web Audio); hide the whole 試聴 card where unsupported.
+    audioOn = !!(TT.audio && TT.audio.supported());
+    if (audioOn) {
+      els.auTimbreScale.addEventListener('change', function () {
+        state.timbreScale = this.value; persist();
+      });
+      els.auTimbreChord.addEventListener('change', function () {
+        state.timbreChord = this.value; persist();
+      });
+      bindRadio('scaleOctave', function (v) { state.octaveScale = parseInt(v, 10); persist(); });
+      bindRadio('chordOctave', function (v) { state.octaveChord = parseInt(v, 10); persist(); });
+      els.auPlayScale.addEventListener('click', function () {
+        var s = data.scales[state.scaleKey];
+        if (s) TT.audio.playScale(state.scaleRoot, s.intervals, state.timbreScale, state.octaveScale);
+      });
+      els.auPlayChord.addEventListener('click', function () {
+        var c = data.chords[state.chordKey];
+        if (c) TT.audio.playChord(state.chordRoot, c.intervals, state.timbreChord, state.octaveChord);
+      });
+      els.auPlayMix.addEventListener('click', function () {
+        var s = data.scales[state.scaleKey];
+        var c = data.chords[state.chordKey];
+        if (s && c) {
+          TT.audio.playScaleChord(state.scaleRoot, s.intervals, state.chordRoot, c.intervals,
+            state.timbreScale, state.timbreChord, state.octaveScale, state.octaveChord);
+        }
+      });
+    } else {
+      els.auditionCard.hidden = true;
+    }
   }
 
   function clampFret(v) {

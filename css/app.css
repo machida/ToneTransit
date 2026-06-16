@@ -72,6 +72,7 @@ h1, h2, h3 { margin: 0; font-weight: 800; letter-spacing: -0.02em; line-height: 
 
 /* Shared "micro label" used above fields and tool groups. */
 .tt-field > label,
+.tt-field-label,
 .tt-tool-label,
 .tt-reco-label,
 .tt-notes-label {
@@ -83,13 +84,14 @@ h1, h2, h3 { margin: 0; font-weight: 800; letter-spacing: -0.02em; line-height: 
 }
 
 .tt-header {
-  padding: 16px 24px;
+  padding: 16px 0;
   border-bottom: 1px solid var(--border);
   background: var(--bg);
 }
 .tt-brand {
   max-width: 1320px;
   margin: 0 auto;
+  padding: 0 24px;
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
@@ -109,12 +111,9 @@ h1, h2, h3 { margin: 0; font-weight: 800; letter-spacing: -0.02em; line-height: 
 /* ============================================================ 3. Control cards */
 .tt-controls {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 16px;
-  align-items: stretch; /* scale & chord cards share the same height */
-}
-@media (max-width: 720px) {
-  .tt-controls { grid-template-columns: 1fr; }
+  align-items: stretch; /* cards in a row share the same height */
 }
 
 .tt-group {
@@ -287,6 +286,32 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
   line-height: 1.5;
   color: var(--accent-soft);
 }
+
+/* Audition card: timbre select + full-width play buttons (scale/chord/mix). */
+.tt-au-buttons { flex: 1 1 100%; display: flex; flex-direction: column; gap: 8px; }
+.tt-au-play {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elev2);
+  color: var(--text);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+}
+.tt-au-play:hover { border-color: var(--accent-soft); }
+.tt-au-play:focus-visible { outline: 2px solid var(--accent-soft); outline-offset: 2px; }
+.tt-au-play:disabled { opacity: 0.5; cursor: not-allowed; }
+.tt-au-play--mix {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: var(--accent-glow);
+}
+.tt-au-play--mix:hover:not(:disabled) { background: var(--accent-strong); border-color: var(--accent-strong); }
 
 /* ============================================================ 6. Preview toolbar + actions */
 .tt-preview-bar {

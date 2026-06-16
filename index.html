@@ -66,6 +66,51 @@
         </div>
       </section>
 
+      <section class="tt-group" id="auditionCard">
+        <div class="tt-group-head"><h3 class="tt-group-title">試聴</h3></div>
+        <div class="tt-group-body">
+          <div class="tt-field tt-field--grow">
+            <label for="auTimbreScale">スケールの音色</label>
+            <select id="auTimbreScale">
+              <option value="piano">ピアノ</option>
+              <option value="epiano">エレピ</option>
+              <option value="organ">オルガン</option>
+              <option value="simple">シンプル（合成）</option>
+            </select>
+          </div>
+          <div class="tt-field">
+            <span class="tt-field-label">スケールのオクターブ</span>
+            <div class="tt-segments" role="radiogroup" aria-label="スケールのオクターブ">
+              <label class="tt-segment"><input type="radio" name="scaleOctave" value="3">3</label>
+              <label class="tt-segment"><input type="radio" name="scaleOctave" value="4">4</label>
+              <label class="tt-segment"><input type="radio" name="scaleOctave" value="5">5</label>
+            </div>
+          </div>
+          <div class="tt-field tt-field--grow">
+            <label for="auTimbreChord">コードの音色</label>
+            <select id="auTimbreChord">
+              <option value="piano">ピアノ</option>
+              <option value="epiano">エレピ</option>
+              <option value="organ">オルガン</option>
+              <option value="simple">シンプル（合成）</option>
+            </select>
+          </div>
+          <div class="tt-field">
+            <span class="tt-field-label">コードのオクターブ</span>
+            <div class="tt-segments" role="radiogroup" aria-label="コードのオクターブ">
+              <label class="tt-segment"><input type="radio" name="chordOctave" value="3">3</label>
+              <label class="tt-segment"><input type="radio" name="chordOctave" value="4">4</label>
+              <label class="tt-segment"><input type="radio" name="chordOctave" value="5">5</label>
+            </div>
+          </div>
+          <div class="tt-au-buttons">
+            <button type="button" class="tt-au-play" id="auPlayScale">▶ スケール</button>
+            <button type="button" class="tt-au-play" id="auPlayChord">▶ コード</button>
+            <button type="button" class="tt-au-play tt-au-play--mix" id="auPlayMix">▶ ミックス（同時）</button>
+          </div>
+        </div>
+      </section>
+
     </section>
 
     <p id="dataError" class="tt-error" hidden></p>
@@ -125,6 +170,12 @@
   <script src="js/music-theory.js"></script>
   <script src="js/fretboard.js"></script>
   <script src="js/renderer.js"></script>
+  <!-- WebAudioFont player + bundled instrument samples (acoustic grand / Rhodes / organ) -->
+  <script src="assets/sound/WebAudioFontPlayer.js"></script>
+  <script src="assets/sound/0000_piano.js"></script>
+  <script src="assets/sound/0040_epiano.js"></script>
+  <script src="assets/sound/0160_organ.js"></script>
+  <script src="js/audio.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
