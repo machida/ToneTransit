@@ -467,50 +467,40 @@
     return '<span class="tt-notes-label">構成音</span>' + chips;
   }
 
-  // The sheet's detail area: two columns (scale / chord), each with its name,
-  // degree formula, constituent notes and description.
+  // The sheet's detail area: two columns (scale / chord). Each shows a role
+  // label, the selected scale/chord name, the notes with their degrees, and the
+  // description.
   function buildSheetInfo(st) {
     var html = '';
     var noChord = st.noChord || !data.chords[st.chordKey];
     if (!st.noScale && data.scales[st.scaleKey]) {
       var s = data.scales[st.scaleKey];
-      html += infoColumn('スケール', st.scaleRoot + ' ' + s.name, {
-        formula: degreeFormula(s.intervals),
-        notes: infoNotes(spellNotes(st.scaleRoot, s.intervals)),
-        desc: s.description
-      });
+      var degs = s.intervals.map(function (iv) { return theory.scaleDegreeLabel(iv); });
+      html += infoColumn('スケール', st.scaleRoot + ' ' + s.name,
+        infoNotes(spellNotes(st.scaleRoot, s.intervals), degs), s.description);
     }
     if (!noChord) {
       var c = data.chords[st.chordKey];
-      var cname = (c.symbol === '' ? st.chordRoot : st.chordRoot + c.symbol) + ' (' + c.name + ')';
-      html += infoColumn('コード', cname, {
-        formula: c.degrees.join(' '),
-        notes: infoNotes(spellNotes(st.chordRoot, c.intervals), c.degrees),
-        desc: c.description
-      });
+      var cname = (c.symbol === '' ? st.chordRoot : st.chordRoot + c.symbol) + '（' + c.name + '）';
+      html += infoColumn('コード', cname,
+        infoNotes(spellNotes(st.chordRoot, c.intervals), c.degrees), c.description);
     }
     return html;
   }
 
-  // Interval set -> degree formula, e.g. lydian -> "1 2 3 ♯4 5 6 7".
-  function degreeFormula(intervals) {
-    return intervals.map(function (iv) { return theory.scaleDegreeLabel(iv); }).join(' ');
-  }
-
   function infoNotes(names, degrees) {
     return names.map(function (n, i) {
-      var d = degrees ? '<span class="tt-info-deg">(' + degrees[i] + ')</span>' : '';
+      var d = degrees ? '<span class="tt-info-deg">' + degrees[i] + '</span>' : '';
       return '<span class="tt-info-note">' + n + d + '</span>';
     }).join('');
   }
 
-  function infoColumn(head, name, parts) {
+  function infoColumn(head, name, notesHTML, desc) {
     return '<div class="tt-info-col">' +
       '<div class="tt-info-head">' + head + '</div>' +
       '<div class="tt-info-name">' + name + '</div>' +
-      (parts.formula ? '<div class="tt-info-formula">' + parts.formula + '</div>' : '') +
-      '<div class="tt-info-notes">' + parts.notes + '</div>' +
-      (parts.desc ? '<div class="tt-info-desc">' + parts.desc + '</div>' : '') +
+      '<div class="tt-info-notes">' + notesHTML + '</div>' +
+      (desc ? '<div class="tt-info-desc">' + desc + '</div>' : '') +
       '</div>';
   }
 

@@ -155,9 +155,9 @@
     // Outer ring: dashed = chord tone outside the scale; solid = guide tone
     // (same fill colour as a chord tone, distinguished by the ring).
     if (cell.outOfScale) {
-      g.appendChild(el('circle', { cx: cx, cy: cy, r: L.radius + 3, class: 'tt-ring tt-ring--out' }));
+      g.appendChild(el('circle', { cx: cx, cy: cy, r: L.radius + 4, class: 'tt-ring tt-ring--out' }));
     } else if (cell.isGuide) {
-      g.appendChild(el('circle', { cx: cx, cy: cy, r: L.radius + 3, class: 'tt-ring' }));
+      g.appendChild(el('circle', { cx: cx, cy: cy, r: L.radius + 4, class: 'tt-ring' }));
     }
 
     var primary = labelFor(cell, mode);
