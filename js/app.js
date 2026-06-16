@@ -56,9 +56,10 @@
     if (p.get('noscale')) state.noScale = p.get('noscale') === '1';
   }
 
-  // Old display modes mixed label + filter. Migrate legacy values ('chord-tones'
-  // / 'guide-tones') from URLs or storage to the current label-only model.
-  function migrateDisplayMode() {
+  // Normalises restored state (URL / storage) to valid values so a bad share
+  // link, stale localStorage or renamed data never crashes update(). Also
+  // migrates legacy display modes ('chord-tones' / 'guide-tones').
+  function normalizeState() {
     if (state.displayMode === 'chord-tones') state.noScale = true;
     if (['name', 'degree', 'name-degree'].indexOf(state.displayMode) < 0) {
       state.displayMode = 'name-degree';
@@ -69,6 +70,13 @@
     if (timbres.indexOf(state.timbreChord) < 0) state.timbreChord = 'piano';
     if ([3, 4, 5].indexOf(state.octaveScale) < 0) state.octaveScale = 4;
     if ([3, 4, 5].indexOf(state.octaveChord) < 0) state.octaveChord = 3;
+    // Unknown scale / chord keys fall back to a valid default.
+    if (!data.scales[state.scaleKey]) {
+      state.scaleKey = data.scales.major ? 'major' : Object.keys(data.scales)[0];
+    }
+    if (!data.chords[state.chordKey]) {
+      state.chordKey = data.chords['7'] ? '7' : Object.keys(data.chords)[0];
+    }
   }
 
   function readStorage() {
@@ -657,14 +665,21 @@
 
   // ---- Boot --------------------------------------------------------------
 
-  function loadData() {
-    return Promise.all([
-      fetch('data/scales.json').then(function (r) { return r.json(); }),
-      fetch('data/chords.json').then(function (r) { return r.json(); })
-    ]).then(function (res) {
-      data.scales = res[0];
-      data.chords = res[1];
+  // Fetches one JSON file, distinguishing HTTP errors from parse errors so the
+  // failure message can point at the right cause.
+  function loadJSON(path) {
+    return fetch(path).then(function (r) {
+      if (!r.ok) throw new Error(path + ' — HTTP ' + r.status);
+      return r.json().catch(function () { throw new Error(path + ' — 不正な JSON'); });
     });
+  }
+
+  function loadData() {
+    return Promise.all([loadJSON('data/scales.json'), loadJSON('data/chords.json')])
+      .then(function (res) {
+        data.scales = res[0];
+        data.chords = res[1];
+      });
   }
 
   function boot() {
@@ -672,15 +687,18 @@
     loadData().then(function () {
       readStorage();
       readUrl(); // URL wins over storage
-      migrateDisplayMode();
+      normalizeState();
       populateSelects();
       bindControls();
       update();
     }).catch(function (err) {
       els.dataError.hidden = false;
-      els.dataError.textContent =
-        'データ (data/*.json) を読み込めませんでした。ローカルサーバー経由で開いてください ' +
-        '（例: python3 -m http.server）。詳細: ' + err.message;
+      var msg = String(err && err.message || err);
+      // A bare network failure (file:// or no server) has no HTTP status.
+      var hint = /HTTP|JSON/.test(msg)
+        ? 'データファイルの取得に失敗しました。'
+        : 'データを取得できません。ローカルサーバー経由で開いてください（例: python3 -m http.server）。';
+      els.dataError.textContent = hint + '（詳細: ' + msg + '）';
     });
   }
 

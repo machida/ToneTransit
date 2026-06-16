@@ -105,6 +105,20 @@ test('outOfScale is never set when there is no scale', () => {
   assert.ok(visibleCells(m).every((c) => c.outOfScale === false));
 });
 
+// ---- buildModel: invalid keys are absorbed, not crashes ----
+
+test('an unknown scaleKey is treated as no scale (no crash)', () => {
+  const m = fretboard.buildModel(makeState({ scaleKey: 'does-not-exist' }), data);
+  assert.equal(m.noScale, true);
+  assert.equal(m.scaleName, '(スケールなし)');
+  assert.ok(visibleCells(m).length > 0); // the chord still renders
+});
+
+test('an unknown chordKey is treated as no chord (no crash)', () => {
+  const m = fretboard.buildModel(makeState({ chordKey: 'does-not-exist' }), data);
+  assert.equal(m.noChord, true);
+});
+
 // ---- buildModel: no chord ----
 
 test('noChord shows the scale alone with plain degrees', () => {

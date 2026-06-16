@@ -49,7 +49,8 @@ python3 -m http.server 8000
 
 状態は URL パラメータと `localStorage` に保存される（URL が優先）。
 URL パラメータ: `root` `scale` `chord`（例: `G7`）`from` `to` `mode`（ラベル）`pal`（配色）
-`toneS` `toneC`（試聴音色）`nochord` `noscale`。
+`toneS` `toneC`（試聴音色）`octS` `octC`（試聴オクターブ）`nochord` `noscale`。
+不正な値（古い共有リンク等）は読み込み時に既定値へ正規化されます。
 
 ## 配色とマーカーの区別
 
@@ -86,9 +87,10 @@ npm test        # = node --test
 
 `test/` の内容:
 - `music-theory.test.js` — 度数計算・音名綴り・スケール度数・おすすめコード生成
-- `fretboard.test.js` — コード記号のパース、モデル生成、スケールなし/コードなし、スケール外コードトーン
+- `fretboard.test.js` — コード記号のパース、モデル生成、スケールなし/コードなし、スケール外コードトーン、不正キーの安全な吸収
 - `renderer.test.js` — 最小 DOM スタブで SVG 構造（マーカー数・ナット・ルートの四角・リング）を検証
 - `data.test.js` — `scales.json` / `chords.json` の妥当性（音程・度数対応・必須フィールド）
+- `audio.test.js` / `audio-sampled.test.js` — 音声 API の露出と、AudioContext/WebAudioFont をモックしたサンプル/合成の切替・オクターブ・ミックス
 
 ## スケール / コードの追加（データスキーマ）
 

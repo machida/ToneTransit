@@ -65,7 +65,9 @@
   // Builds the diagram model for the current state.
   function buildModel(state, data) {
     var scale = data.scales[state.scaleKey];
-    var noScale = !!state.noScale;
+    // Unknown scaleKey (bad share link / stale storage / renamed data) is
+    // treated as "no scale" so we never dereference an undefined scale.
+    var noScale = !!state.noScale || !scale;
     var noChord = !!state.noChord || !data.chords[state.chordKey];
     var chord = noChord ? null : data.chords[state.chordKey];
     // Note spelling follows the scale root normally; with no scale there is no
