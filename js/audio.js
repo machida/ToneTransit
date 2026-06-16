@@ -32,9 +32,10 @@
   var ctx = null;
   var masterGain = null;
   var waf = null;            // WebAudioFont player (if available)
-  var decoded = {};          // timbre -> true once its samples are decoded
+  var decodeStarted = {};    // timbre -> true once decoding has been kicked off
   var waveCache = {};        // synth PeriodicWave cache
   var active = [];           // scheduled synth oscillators (for stop)
+
   function context() {
     if (!AC) return null;
     if (!ctx) {
@@ -42,10 +43,22 @@
       masterGain = ctx.createGain();
       masterGain.gain.value = 0.6;
       masterGain.connect(ctx.destination);
-      if (global.WebAudioFontPlayer) waf = new global.WebAudioFontPlayer();
+      if (global.WebAudioFontPlayer) {
+        waf = new global.WebAudioFontPlayer();
+        // Start decoding all sampled instruments now (asynchronous); until a
+        // preset is fully decoded, sampleFor() returns null and we use synth.
+        Object.keys(SAMPLED).forEach(startDecode);
+      }
     }
     if (ctx.state === 'suspended' && ctx.resume) ctx.resume();
     return ctx;
+  }
+
+  function startDecode(name) {
+    var varName = SAMPLED[name];
+    if (!waf || !varName || !global[varName] || decodeStarted[name]) return;
+    waf.loader.decodeAfterLoading(ctx, varName);
+    decodeStarted[name] = true;
   }
 
   function midiToFreq(m) { return 440 * Math.pow(2, (m - 69) / 12); }
@@ -55,15 +68,14 @@
     return 12 * (oct + 1) + TT.theory.pitchClassOf(rootName);
   }
 
-  // Returns the decoded sample preset for the current timbre, or null.
+  // The sample preset for a timbre, but ONLY once fully decoded; otherwise null
+  // so the caller falls back to the synth (avoids the silent first play).
   function sampleFor(name) {
     if (!waf) return null;
     var varName = SAMPLED[name];
-    if (!varName) return null;
-    var tone = global[varName];
-    if (!tone) return null;
-    if (!decoded[name]) { waf.loader.decodeAfterLoading(ctx, varName); decoded[name] = true; }
-    return tone;
+    if (!varName || !global[varName]) return null;
+    startDecode(name);
+    return waf.loader.loaded(varName) ? global[varName] : null;
   }
 
   // --- synth fallback ---
