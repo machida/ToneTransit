@@ -137,8 +137,25 @@
     return cell.outOfScale ? base + ' tt-out' : base;
   }
 
+  // A plain-language description of a note's role (for the SVG <title> /
+  // screen readers / hover). E.g. "B — 3（ガイドトーン・スケール内）".
+  function describeCell(cell) {
+    var role;
+    if (cell.isChordRoot) role = 'ルート';
+    else if (cell.isGuide) role = 'ガイドトーン';
+    else if (cell.isChordTone) role = 'コードトーン';
+    else role = 'スケール音';
+    var loc = cell.outOfScale ? '・スケール外' : '';
+    return cell.name + ' — ' + cell.degree + '（' + role + loc + '）';
+  }
+
   function drawNote(svg, cell, cx, cy, mode) {
-    var g = el('g', { class: noteClass(cell) });
+    var g = el('g', {
+      class: noteClass(cell),
+      'data-pc': cell.pitchClass,
+      'data-fret': cell.fret
+    });
+    g.appendChild(el('title', {}, describeCell(cell))); // hover / SR description
 
     // Chord root gets a square so it reads even with no colour; the rest are
     // circles.
@@ -185,5 +202,5 @@
     return mode === 'degree' ? cell.degree : cell.name;
   }
 
-  TT.renderer = { render: render };
+  TT.renderer = { render: render, describeCell: describeCell };
 })(typeof window !== 'undefined' ? window : this);

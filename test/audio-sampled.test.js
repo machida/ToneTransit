@@ -99,3 +99,14 @@ test('playScaleChord mixes per-part timbre and octave', () => {
   // 3 chord tones + 4 scale notes (3 + octave)
   assert.equal(global.__queued.length, 7);
 });
+
+test('onNote fires per scheduled note with pitch class and timing (SPEC-06)', () => {
+  reset(true);
+  var events = [];
+  audio.onNote(function (ev) { events.push(ev); });
+  audio.playScale('C', [0, 4, 7], 'piano', 4); // C E G + octave C
+  assert.equal(events.length, 4);
+  assert.deepEqual(events.map(function (e) { return e.pitchClass; }), [0, 4, 7, 0]);
+  assert.ok(events.every(function (e) { return typeof e.delay === 'number' && e.delay >= 0; }));
+  assert.ok(events.every(function (e) { return e.dur > 0; }));
+});

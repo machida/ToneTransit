@@ -119,11 +119,25 @@
     osc.onended = function () { var i = active.indexOf(osc); if (i >= 0) active.splice(i, 1); };
   }
 
+  // Note-event listeners (for syncing the diagram with playback). Each gets
+  // { pitchClass, midi, delay, dur } where `delay` is seconds from now.
+  var noteListeners = [];
+  function onNote(cb) { if (typeof cb === 'function') noteListeners.push(cb); }
+  function emitNote(midi, when, dur) {
+    if (!noteListeners.length) return;
+    var delay = ctx ? Math.max(0, when - ctx.currentTime) : 0;
+    var ev = { pitchClass: ((midi % 12) + 12) % 12, midi: midi, delay: delay, dur: dur };
+    for (var i = 0; i < noteListeners.length; i++) {
+      try { noteListeners[i](ev); } catch (e) { /* a bad listener can't break audio */ }
+    }
+  }
+
   // Schedules one note with the given timbre, via samples if available, else synth.
   function note(timbre, midi, when, dur, vol) {
     var preset = sampleFor(timbre);
     if (preset) waf.queueWaveTable(ctx, masterGain, preset, when, midi, dur, vol);
     else synthTone(timbre, midiToFreq(midi), when, dur, vol);
+    emitNote(midi, when, dur);
   }
 
   function stop() {
@@ -183,6 +197,7 @@
     playScale: playScale,
     playChord: playChord,
     playScaleChord: playScaleChord,
+    onNote: onNote,
     stop: stop
   };
 })(typeof window !== 'undefined' ? window : this);

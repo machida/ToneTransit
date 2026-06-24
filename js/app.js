@@ -151,7 +151,8 @@
       'chordRoot', 'chordRootField', 'chord', 'chordTypeField', 'chordToggle', 'chordReco', 'chordNotes', 'chordDesc',
       'fretStart', 'fretEnd',
       'auditionCard', 'auTimbreScale', 'auTimbreChord', 'auPlayScale', 'auPlayChord', 'auPlayMix',
-      'presets', 'board', 'sheetTitle', 'summary', 'sheetInfo', 'dataError'
+      'presets', 'board', 'sheetTitle', 'summary', 'sheetInfo', 'dataError',
+      'quiz', 'quizQ', 'quizFeedback', 'quizNext', 'quizClose', 'quizBtn'
     ].forEach(function (id) { els[id] = document.getElementById(id); });
   }
 
@@ -614,6 +615,9 @@
   function update() {
     var model = fretboard.buildModel(state, data);
 
+    // Any change to the board invalidates an in-progress quiz question.
+    if (quiz.active) endQuiz();
+
     els.board.innerHTML = '';
     if (model.noScale && model.noChord) {
       var empty = document.createElement('p');
@@ -634,6 +638,86 @@
     renderNoteLists();
     updatePresetsActive();
     persist();
+  }
+
+  // ---- Playback highlighting (SPEC-06) -----------------------------------
+
+  var playTimers = [];
+
+  function clearPlayHighlights() {
+    playTimers.forEach(function (t) { global.clearTimeout(t); });
+    playTimers = [];
+    if (!els.board) return;
+    var lit = els.board.querySelectorAll('.tt-note.is-playing');
+    Array.prototype.forEach.call(lit, function (n) { n.classList.remove('is-playing'); });
+  }
+
+  function setPcPlaying(pc, on) {
+    if (!els.board) return;
+    var nodes = els.board.querySelectorAll('[data-pc="' + pc + '"]');
+    Array.prototype.forEach.call(nodes, function (n) { n.classList.toggle('is-playing', on); });
+  }
+
+  // Called for each scheduled note; lights the matching pitch class on, then off.
+  function schedulePlayHighlight(ev) {
+    var on = global.setTimeout(function () { setPcPlaying(ev.pitchClass, true); }, ev.delay * 1000);
+    var off = global.setTimeout(function () { setPcPlaying(ev.pitchClass, false); }, (ev.delay + ev.dur) * 1000);
+    playTimers.push(on, off);
+  }
+
+  // ---- Quiz (SPEC-09) ----------------------------------------------------
+
+  var quiz = { active: false, answer: null };
+
+  function clearQuizMarks() {
+    if (!els.board) return;
+    var marked = els.board.querySelectorAll('.tt-note.is-correct, .tt-note.is-wrong');
+    Array.prototype.forEach.call(marked, function (n) {
+      n.classList.remove('is-correct', 'is-wrong');
+    });
+  }
+
+  function startQuiz() {
+    if (!TT.quiz) return;
+    var q = TT.quiz.quizFor(fretboard.buildModel(state, data));
+    if (!q) { flash('この盤面では出題できません'); return; }
+    quiz.active = true;
+    quiz.answer = q.correctPitchClasses;
+    clearQuizMarks();
+    clearPlayHighlights();
+    els.quiz.hidden = false;
+    els.quizQ.textContent = q.prompt + '（盤上の音をタップ）';
+    els.quizFeedback.textContent = '';
+    els.quizFeedback.className = 'tt-quiz-feedback';
+  }
+
+  function endQuiz() {
+    quiz.active = false;
+    quiz.answer = null;
+    clearQuizMarks();
+    if (els.quiz) els.quiz.hidden = true;
+  }
+
+  function markPc(pc, cls) {
+    var nodes = els.board.querySelectorAll('[data-pc="' + pc + '"]');
+    Array.prototype.forEach.call(nodes, function (n) { n.classList.add(cls); });
+  }
+
+  function onBoardClick(e) {
+    if (!quiz.active) return;
+    var g = e.target.closest ? e.target.closest('[data-pc]') : null;
+    if (!g) return;
+    var pc = parseInt(g.getAttribute('data-pc'), 10);
+    if (quiz.answer.indexOf(pc) >= 0) {
+      quiz.answer.forEach(function (p) { markPc(p, 'is-correct'); });
+      els.quizFeedback.textContent = '正解！';
+      els.quizFeedback.className = 'tt-quiz-feedback is-ok';
+      quiz.active = false; // answered; 次の問題 で再開
+    } else {
+      markPc(pc, 'is-wrong');
+      els.quizFeedback.textContent = 'ちがう…もう一度';
+      els.quizFeedback.className = 'tt-quiz-feedback is-ng';
+    }
   }
 
   // ---- Wiring ------------------------------------------------------------
@@ -672,6 +756,12 @@
     });
     document.getElementById('shareBtn').addEventListener('click', copyShareLink);
 
+    // Quiz (SPEC-09): start / next / quit, and tap-to-answer on the board.
+    if (els.quizBtn) els.quizBtn.addEventListener('click', startQuiz);
+    if (els.quizNext) els.quizNext.addEventListener('click', startQuiz);
+    if (els.quizClose) els.quizClose.addEventListener('click', endQuiz);
+    if (els.board) els.board.addEventListener('click', onBoardClick);
+
     // Audio audition (Web Audio); hide the whole 試聴 card where unsupported.
     audioOn = !!(TT.audio && TT.audio.supported());
     if (audioOn) {
@@ -683,21 +773,27 @@
       });
       bindRadio('scaleOctave', function (v) { state.octaveScale = parseInt(v, 10); persist(); });
       bindRadio('chordOctave', function (v) { state.octaveChord = parseInt(v, 10); persist(); });
+      // Light up the matching notes on the board as they sound (SPEC-06).
+      TT.audio.onNote(schedulePlayHighlight);
       els.auPlayScale.addEventListener('click', function () {
         var s = data.scales[state.scaleKey];
-        if (s) TT.audio.playScale(state.scaleRoot, s.intervals, state.timbreScale, state.octaveScale);
+        if (!s) return;
+        clearPlayHighlights();
+        TT.audio.playScale(state.scaleRoot, s.intervals, state.timbreScale, state.octaveScale);
       });
       els.auPlayChord.addEventListener('click', function () {
         var c = data.chords[state.chordKey];
-        if (c) TT.audio.playChord(state.chordRoot, c.intervals, state.timbreChord, state.octaveChord);
+        if (!c) return;
+        clearPlayHighlights();
+        TT.audio.playChord(state.chordRoot, c.intervals, state.timbreChord, state.octaveChord);
       });
       els.auPlayMix.addEventListener('click', function () {
         var s = data.scales[state.scaleKey];
         var c = data.chords[state.chordKey];
-        if (s && c) {
-          TT.audio.playScaleChord(state.scaleRoot, s.intervals, state.chordRoot, c.intervals,
-            state.timbreScale, state.timbreChord, state.octaveScale, state.octaveChord);
-        }
+        if (!s || !c) return;
+        clearPlayHighlights();
+        TT.audio.playScaleChord(state.scaleRoot, s.intervals, state.chordRoot, c.intervals,
+          state.timbreScale, state.timbreChord, state.octaveScale, state.octaveChord);
       });
     } else {
       els.auditionCard.hidden = true;

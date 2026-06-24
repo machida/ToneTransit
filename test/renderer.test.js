@@ -101,6 +101,26 @@ test('name-degree mode renders two text labels per note', () => {
   });
 });
 
+test('every note group carries a <title> and data-pc/data-fret (SPEC-06/07)', () => {
+  const model = fretboard.buildModel(makeState({ chordRoot: 'G', chordKey: '7' }), data);
+  const svg = renderer.render(model);
+  const groups = byClass(svg, 'tt-note');
+  assert.ok(groups.length > 0);
+  groups.forEach((g) => {
+    const title = g.childNodes.find((c) => c.nodeName === 'title');
+    assert.ok(title && title.textContent.length > 0, 'note has a descriptive <title>');
+    assert.ok(g._attrs['data-pc'] !== undefined, 'note carries data-pc');
+    assert.ok(g._attrs['data-fret'] !== undefined, 'note carries data-fret');
+  });
+});
+
+test('describeCell names the role of a note (SPEC-07)', () => {
+  const model = fretboard.buildModel(makeState({ chordRoot: 'G', chordKey: '7' }), data);
+  const b = visibleCells(model).find((c) => c.name === 'B'); // 3rd of G7 = guide
+  assert.match(renderer.describeCell(b), /ガイドトーン/);
+  assert.match(renderer.describeCell(b), /^B —/);
+});
+
 test('empty model (no scale, no chord) draws no note markers', () => {
   const model = fretboard.buildModel(makeState({ noScale: true, noChord: true }), data);
   const svg = renderer.render(model);

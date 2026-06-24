@@ -514,6 +514,40 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
   max-width: 70ch;
 }
 
+/* Quiz bar (SPEC-09) */
+.tt-quiz {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  background: rgba(124, 58, 237, 0.08);
+  border: 1px solid var(--accent-soft);
+  border-radius: var(--radius-sm);
+  color: var(--paper-ink);
+}
+.tt-quiz-q { font-size: 14px; font-weight: 700; }
+.tt-quiz-feedback { font-size: 13px; font-weight: 800; }
+.tt-quiz-feedback.is-ok { color: #15803d; }
+.tt-quiz-feedback.is-ng { color: #b91c1c; }
+.tt-quiz-actions { margin-left: auto; display: inline-flex; gap: 8px; }
+.tt-quiz-btn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 5px 13px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+.tt-quiz-btn--ghost { background: #fff; color: var(--accent-strong); }
+/* Answer feedback on the board */
+.tt-note.is-correct .tt-shape { stroke: #15803d; stroke-width: 4.5; }
+.tt-note.is-wrong .tt-shape { stroke: #b91c1c; stroke-width: 4.5; }
+
 .tt-board { overflow-x: auto; margin-bottom: 8px; }
 .tt-empty { margin: 0; padding: 40px 8px; color: var(--paper-dim); font-size: 15px; text-align: center; }
 .tt-fretboard { display: block; width: 100%; height: auto; min-width: 640px; }
@@ -526,8 +560,13 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 .tt-stringlabel { fill: var(--paper-dim); font-size: 13px; font-weight: 600; }
 
 /* Note markers (palette from the variables above). */
-.tt-note .tt-shape { stroke: var(--note-stroke); stroke-width: 1.6; }
+.tt-note .tt-shape { stroke: var(--note-stroke); stroke-width: 1.6; transition: stroke 0.08s, stroke-width 0.08s; }
+/* Lit while the note sounds during playback (SPEC-06). */
+.tt-note.is-playing .tt-shape { stroke: var(--accent-soft); stroke-width: 4.5; }
 .tt-note .tt-label { font-size: 14px; font-weight: 700; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  .tt-note .tt-shape { transition: none; }
+}
 .tt-note .tt-label-main { font-size: 13px; }
 .tt-note .tt-label-sub { font-size: 11px; font-weight: 600; }
 
