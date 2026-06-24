@@ -789,6 +789,8 @@
     document.getElementById('shareBtn').addEventListener('click', copyShareLink);
     var imgBtn = document.getElementById('imgBtn');
     if (imgBtn) imgBtn.addEventListener('click', exportPng);
+    var tourBtn = document.getElementById('tourBtn');
+    if (tourBtn) tourBtn.addEventListener('click', startTour);
 
     // Open the glossary when the legend's "用語の意味" link is followed.
     var glossaryEl = document.getElementById('glossary');
@@ -949,6 +951,7 @@
     try { global.localStorage.setItem(ONBOARD_KEY, '1'); } catch (e) {}
   }
 
+  // The short first-run nudge…
   var COACH_STEPS = [
     { sel: '#presets', text: 'まずはここから。例をクリックすると、意味のある盤面がすぐ開きます。' },
     { sel: '#chord', text: 'コードを変えると、各音の「度数（今のコードに対する意味）」が切り替わります。' },
@@ -956,8 +959,21 @@
     { sel: '#shareBtn', text: '今の状態はリンクで共有・印刷できます。' }
   ];
 
-  function startCoach() {
-    var steps = COACH_STEPS.filter(function (s) {
+  // …and the fuller on-demand tour (SPEC-12) launched from the 使い方 button.
+  var TOUR_STEPS = [
+    { sel: '#presets', text: '① まずは例から。クリックすると意味のある盤面が開きます。' },
+    { sel: '#scaleSearch', text: '② スケールは検索して選べます（例: ドリアン / lydian / かな）。' },
+    { sel: '#chord', text: '③ コードを選ぶと、各音の度数（今のコードに対する意味）が変わります。' },
+    { sel: '#summary', text: '④ 図の意味は、ここに日本語で要約されます。' },
+    { sel: '#auPlayScale', text: '⑤ ▶ で音を鳴らすと、鳴っている音が盤上で光ります。' },
+    { sel: '#quizBtn', text: '⑥ クイズで理解度を確認できます。' },
+    { sel: '#shareBtn', text: '⑦ 今の状態はリンク共有・印刷・画像保存できます。' }
+  ];
+
+  // Runs a sequence of pointer tips. Used for both the first-run coach and the
+  // on-demand tour. Closing always records onboarding so the auto-nudge stops.
+  function runTour(rawSteps) {
+    var steps = rawSteps.filter(function (s) {
       var el = document.querySelector(s.sel);
       return el && el.offsetParent !== null; // exists and visible
     });
@@ -1030,8 +1046,9 @@
   }
 
   function maybeStartCoach() {
-    if (shouldShowCoach()) startCoach();
+    if (shouldShowCoach()) runTour(COACH_STEPS);
   }
+  function startTour() { runTour(TOUR_STEPS); }
 
   // ---- Boot --------------------------------------------------------------
 
