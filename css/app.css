@@ -505,7 +505,14 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 @media screen {
   .tt-sheet--main { width: 100%; aspect-ratio: 297 / 210; overflow: auto; }
 }
-.tt-sheet-title { margin: 0 0 20px; font-size: 22px; color: var(--paper-ink); letter-spacing: -0.01em; }
+.tt-sheet-title { margin: 0 0 10px; font-size: 22px; color: var(--paper-ink); letter-spacing: -0.01em; }
+.tt-summary {
+  margin: 0 0 20px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--paper-dim);
+  max-width: 70ch;
+}
 
 .tt-board { overflow-x: auto; margin-bottom: 8px; }
 .tt-empty { margin: 0; padding: 40px 8px; color: var(--paper-dim); font-size: 15px; text-align: center; }
@@ -649,3 +656,42 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
   transition: opacity 0.2s, transform 0.2s;
 }
 .tt-toast.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* First-run coaching marks (SPEC-04) */
+.tt-coach-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(2, 6, 23, 0.55);
+}
+.tt-coach-tip {
+  position: absolute;
+  max-width: min(320px, 90vw);
+  padding: 14px 16px;
+  background: var(--bg-elev);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow), var(--accent-glow);
+  color: var(--text);
+}
+.tt-coach-text { margin: 0 0 12px; font-size: 14px; line-height: 1.55; }
+.tt-coach-actions { display: flex; align-items: center; gap: 8px; }
+.tt-coach-count { font-size: 12px; color: var(--text-dim); margin-right: auto; }
+.tt-coach-skip, .tt-coach-next {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-elev2);
+  color: var(--text);
+}
+.tt-coach-next { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tt-coach-skip:hover { border-color: var(--accent-soft); }
+.tt-coach-next:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tt-toast { transition: none; }
+}

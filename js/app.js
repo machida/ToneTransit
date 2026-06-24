@@ -625,6 +625,7 @@
     }
 
     els.sheetTitle.textContent = titleFor(model);
+    if (els.summary && TT.summary) els.summary.textContent = TT.summary(model);
     els.sheetInfo.innerHTML = buildSheetInfo(state, model);
     global.document.title = titleFor(model) + ' — ToneTransit';
 
@@ -727,6 +728,103 @@
     global.setTimeout(function () { n.classList.remove('is-visible'); }, 1800);
   }
 
+  // ---- First-run coaching (SPEC-04) -------------------------------------
+  // Shown once; the flag lives OUTSIDE `state` so it never rides along in a
+  // shared URL.
+  var ONBOARD_KEY = 'tone-transit:onboarded';
+
+  function shouldShowCoach() {
+    try { return global.localStorage.getItem(ONBOARD_KEY) !== '1'; }
+    catch (e) { return false; } // no storage → don't nag every load
+  }
+  function markOnboarded() {
+    try { global.localStorage.setItem(ONBOARD_KEY, '1'); } catch (e) {}
+  }
+
+  var COACH_STEPS = [
+    { sel: '#presets', text: 'まずはここから。例をクリックすると、意味のある盤面がすぐ開きます。' },
+    { sel: '#chord', text: 'コードを変えると、各音の「度数（今のコードに対する意味）」が切り替わります。' },
+    { sel: '#auPlayScale', text: '▶ で音を鳴らして、耳でも確かめられます。' },
+    { sel: '#shareBtn', text: '今の状態はリンクで共有・印刷できます。' }
+  ];
+
+  function startCoach() {
+    var steps = COACH_STEPS.filter(function (s) {
+      var el = document.querySelector(s.sel);
+      return el && el.offsetParent !== null; // exists and visible
+    });
+    if (!steps.length) return;
+
+    var backdrop = document.createElement('div');
+    backdrop.className = 'tt-coach-backdrop';
+    var tip = document.createElement('div');
+    tip.className = 'tt-coach-tip';
+    tip.setAttribute('role', 'dialog');
+    tip.setAttribute('aria-live', 'polite');
+    backdrop.appendChild(tip);
+    document.body.appendChild(backdrop);
+
+    var i = 0;
+    function close() {
+      markOnboarded();
+      if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+      global.removeEventListener('resize', place);
+    }
+    function place() {
+      var target = document.querySelector(steps[i].sel);
+      if (!target) { close(); return; }
+      // Tip is a child of the fixed backdrop, so viewport coords are correct.
+      var r = target.getBoundingClientRect();
+      var top = r.bottom + 10;
+      // If the target is near the bottom, place the tip above it instead.
+      if (top + tip.offsetHeight > global.innerHeight - 8) {
+        top = Math.max(8, r.top - tip.offsetHeight - 10);
+      }
+      tip.style.top = top + 'px';
+      tip.style.left = Math.max(8, Math.min(r.left, global.innerWidth - tip.offsetWidth - 8)) + 'px';
+    }
+    function render() {
+      var last = i === steps.length - 1;
+      tip.innerHTML = '';
+      var p = document.createElement('p');
+      p.className = 'tt-coach-text';
+      p.textContent = steps[i].text;
+      var row = document.createElement('div');
+      row.className = 'tt-coach-actions';
+      var count = document.createElement('span');
+      count.className = 'tt-coach-count';
+      count.textContent = (i + 1) + ' / ' + steps.length;
+      var skip = document.createElement('button');
+      skip.type = 'button';
+      skip.className = 'tt-coach-skip';
+      skip.textContent = '閉じる';
+      skip.addEventListener('click', close);
+      var next = document.createElement('button');
+      next.type = 'button';
+      next.className = 'tt-coach-next';
+      next.textContent = last ? '使ってみる' : '次へ';
+      next.addEventListener('click', function () {
+        if (last) { close(); return; }
+        i++; render(); place();
+      });
+      row.appendChild(count);
+      row.appendChild(skip);
+      row.appendChild(next);
+      tip.appendChild(p);
+      tip.appendChild(row);
+      var target = document.querySelector(steps[i].sel);
+      if (target && target.scrollIntoView) target.scrollIntoView({ block: 'center' });
+    }
+    backdrop.addEventListener('click', function (e) { if (e.target === backdrop) close(); });
+    global.addEventListener('resize', place);
+    render();
+    place();
+  }
+
+  function maybeStartCoach() {
+    if (shouldShowCoach()) startCoach();
+  }
+
   // ---- Boot --------------------------------------------------------------
 
   // Fetches one JSON file, distinguishing HTTP errors from parse errors so the
@@ -756,6 +854,7 @@
       bindControls();
       renderPresets();
       update();
+      maybeStartCoach();
     }).catch(function (err) {
       els.dataError.hidden = false;
       var msg = String(err && err.message || err);
