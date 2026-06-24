@@ -54,6 +54,21 @@
   color-scheme: dark;
 }
 
+/* Light theme (SPEC-14): override the dark UI chrome only. The "paper" diagram
+   and note palette stay the same, so the printout is unchanged. JS resolves
+   'auto' to light/dark and sets data-theme on <html>. */
+[data-theme="light"] {
+  --bg: #eef1f6;
+  --bg-elev: #ffffff;
+  --bg-elev2: #f1f4f9;
+  --bg-input: #ffffff;
+  --border: #d4dae3;
+  --text: #1f2733;
+  --text-dim: #5b6878;
+  --shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 10px 24px -16px rgba(15, 23, 42, 0.3);
+  color-scheme: light;
+}
+
 /* ============================================================ 2. Base + layout */
 * { box-sizing: border-box; }
 

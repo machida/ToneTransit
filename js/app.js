@@ -29,6 +29,7 @@
     fretEnd: 12,
     displayMode: 'name-degree', // label style: name | degree | name-degree
     level: 'advanced',          // detail level: beginner | advanced
+    theme: 'auto',              // UI theme: auto | light | dark
     palette: 'color',           // preview palette: color | mono
     timbreScale: 'piano',       // audition timbres: piano | epiano | organ | simple
     timbreChord: 'piano',
@@ -49,6 +50,7 @@
     if (p.get('to')) state.fretEnd = parseInt(p.get('to'), 10) || 12;
     if (p.get('mode')) state.displayMode = p.get('mode');
     if (p.get('lvl')) state.level = p.get('lvl');
+    if (p.get('th')) state.theme = p.get('th');
     if (p.get('pal')) state.palette = p.get('pal');
     if (p.get('tone')) { state.timbreScale = state.timbreChord = p.get('tone'); } // legacy single
     if (p.get('toneS')) state.timbreScale = p.get('toneS');
@@ -67,6 +69,7 @@
       state.displayMode = 'name-degree';
     }
     if (['beginner', 'advanced'].indexOf(state.level) < 0) state.level = 'advanced';
+    if (['auto', 'light', 'dark'].indexOf(state.theme) < 0) state.theme = 'auto';
     if (['color', 'mono'].indexOf(state.palette) < 0) state.palette = 'color';
     var timbres = ['piano', 'epiano', 'organ', 'simple'];
     if (timbres.indexOf(state.timbreScale) < 0) state.timbreScale = 'piano';
@@ -118,6 +121,7 @@
     p.set('to', state.fretEnd);
     p.set('mode', state.displayMode);
     if (state.level !== 'advanced') p.set('lvl', state.level);
+    if (state.theme !== 'auto') p.set('th', state.theme);
     if (state.palette === 'mono') p.set('pal', 'mono');
     if (state.timbreScale !== 'piano') p.set('toneS', state.timbreScale);
     if (state.timbreChord !== 'piano') p.set('toneC', state.timbreChord);
@@ -412,8 +416,10 @@
     els.fretEnd.value = state.fretEnd;
     setRadio('displayMode', state.displayMode);
     setRadio('level', state.level);
+    setRadio('theme', state.theme);
     setRadio('palette', state.palette);
     document.body.classList.toggle('tt-mono', state.palette === 'mono');
+    applyTheme();
     // Switches are ON when the scale / chord is shown (i.e. NOT the "なし" flag).
     els.scaleToggle.checked = !state.noScale;
     els.chordToggle.checked = !state.noChord;
@@ -441,6 +447,25 @@
       els.auPlayChord.disabled = state.noChord;
       els.auPlayMix.disabled = state.noScale || state.noChord; // needs both
     }
+  }
+
+  // ---- Theme (SPEC-14) ---------------------------------------------------
+
+  function prefersDark() {
+    return !!(global.matchMedia && global.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
+  // Resolves 'auto' against the OS preference and sets data-theme on <html>.
+  function applyTheme() {
+    var resolved = state.theme === 'auto' ? (prefersDark() ? 'dark' : 'light') : state.theme;
+    document.documentElement.setAttribute('data-theme', resolved);
+  }
+  // Re-resolve on OS change while in 'auto'.
+  function watchSystemTheme() {
+    if (!global.matchMedia) return;
+    var mq = global.matchMedia('(prefers-color-scheme: dark)');
+    var handler = function () { if (state.theme === 'auto') applyTheme(); };
+    if (mq.addEventListener) mq.addEventListener('change', handler);
+    else if (mq.addListener) mq.addListener(handler); // older Safari
   }
 
   // Recommended (diatonic) chords for the current scale, shown as quick-picks.
@@ -755,6 +780,7 @@
     });
     bindRadio('displayMode', function (v) { state.displayMode = v; update(); });
     bindRadio('level', function (v) { state.level = v; update(); });
+    bindRadio('theme', function (v) { state.theme = v; applyTheme(); persist(); });
     bindRadio('palette', function (v) { state.palette = v; update(); });
 
     document.getElementById('printBtn').addEventListener('click', function () {
@@ -1032,6 +1058,8 @@
       readStorage();
       readUrl(); // URL wins over storage
       normalizeState();
+      applyTheme(); // set theme before first paint to avoid a flash
+      watchSystemTheme();
       populateSelects();
       bindControls();
       renderPresets();
