@@ -22,7 +22,15 @@
     <p class="tt-intro">スケールとコードを選ぶと、各音が「今のコードに対して何度か」を指板上に表示します。</p>
     <section class="tt-controls" aria-label="設定">
       <section class="tt-group">
-        <div class="tt-group-head"><h3 class="tt-group-title">スケール</h3></div>
+        <div class="tt-group-head">
+          <h3 class="tt-group-title">スケール</h3>
+          <label class="tt-switch">
+            <span class="tt-switch-label">表示</span>
+            <input type="checkbox" id="scaleToggle" class="tt-switch-input" role="switch"
+                   checked aria-label="スケールを表示（オフでコードトーンのみ）">
+            <span class="tt-switch-track" aria-hidden="true"><span class="tt-switch-thumb"></span></span>
+          </label>
+        </div>
         <div class="tt-group-body">
           <div class="tt-field" id="scaleRootField">
             <label for="scaleRoot">ルート</label>
@@ -37,17 +45,22 @@
               <ul class="tt-combo-list" id="scaleList" role="listbox" hidden></ul>
             </div>
           </div>
-          <label class="tt-check tt-check--full">
-            <input type="checkbox" id="noScale"> スケールなし（コードトーンのみ表示）
-          </label>
-          <p class="tt-hint" id="scaleHint" hidden>音名の綴りはコードのルート基準で表示します。</p>
+          <p class="tt-hint" id="scaleHint" hidden>スケールなし：音名の綴りはコードのルート基準で表示します。</p>
           <div class="tt-notes" id="scaleNotes" aria-label="スケール構成音"></div>
           <p class="tt-desc" id="scaleDesc"></p>
         </div>
       </section>
 
       <section class="tt-group">
-        <div class="tt-group-head"><h3 class="tt-group-title">コード</h3></div>
+        <div class="tt-group-head">
+          <h3 class="tt-group-title">コード</h3>
+          <label class="tt-switch">
+            <span class="tt-switch-label">表示</span>
+            <input type="checkbox" id="chordToggle" class="tt-switch-input" role="switch"
+                   checked aria-label="コードを表示（オフでスケールのみ）">
+            <span class="tt-switch-track" aria-hidden="true"><span class="tt-switch-thumb"></span></span>
+          </label>
+        </div>
         <div class="tt-group-body">
           <div class="tt-field" id="chordRootField">
             <label for="chordRoot">コードルート</label>
@@ -57,9 +70,6 @@
             <label for="chord">種類</label>
             <select id="chord"></select>
           </div>
-          <label class="tt-check tt-check--full">
-            <input type="checkbox" id="noChord"> コードなし（スケールのみ表示）
-          </label>
           <div class="tt-reco" id="chordReco" aria-label="おすすめコード"></div>
           <div class="tt-notes" id="chordNotes" aria-label="コード構成音"></div>
           <p class="tt-desc" id="chordDesc"></p>
@@ -79,7 +89,7 @@
             </select>
           </div>
           <div class="tt-field">
-            <span class="tt-field-label">スケールのオクターブ</span>
+            <span class="tt-field-label">オクターブ</span>
             <div class="tt-segments" role="radiogroup" aria-label="スケールのオクターブ">
               <label class="tt-segment"><input type="radio" name="scaleOctave" value="3">3</label>
               <label class="tt-segment"><input type="radio" name="scaleOctave" value="4">4</label>
@@ -96,7 +106,7 @@
             </select>
           </div>
           <div class="tt-field">
-            <span class="tt-field-label">コードのオクターブ</span>
+            <span class="tt-field-label">オクターブ</span>
             <div class="tt-segments" role="radiogroup" aria-label="コードのオクターブ">
               <label class="tt-segment"><input type="radio" name="chordOctave" value="3">3</label>
               <label class="tt-segment"><input type="radio" name="chordOctave" value="4">4</label>
@@ -106,7 +116,7 @@
           <div class="tt-au-buttons">
             <button type="button" class="tt-au-play" id="auPlayScale">▶ スケール</button>
             <button type="button" class="tt-au-play" id="auPlayChord">▶ コード</button>
-            <button type="button" class="tt-au-play tt-au-play--mix" id="auPlayMix">▶ ミックス（同時）</button>
+            <button type="button" class="tt-au-play tt-au-play--mix" id="auPlayMix">▶ ミックス</button>
           </div>
         </div>
       </section>

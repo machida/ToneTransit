@@ -124,10 +124,44 @@ h1, h2, h3 { margin: 0; font-weight: 800; letter-spacing: -0.02em; line-height: 
   box-shadow: var(--shadow);
 }
 .tt-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   padding: 10px 16px;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   border-radius: var(--radius) var(--radius) 0 0;
+}
+
+/* On/off switch in a card header (replaces the なし checkboxes). */
+.tt-switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.tt-switch-label { font-size: 12px; font-weight: 700; color: var(--text-dim); }
+.tt-switch-input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.tt-switch-track {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background 0.15s;
+}
+.tt-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s;
+}
+.tt-switch-input:checked + .tt-switch-track { background: var(--accent); }
+.tt-switch-input:checked + .tt-switch-track .tt-switch-thumb { transform: translateX(18px); }
+.tt-switch-input:focus-visible + .tt-switch-track {
+  outline: 2px solid var(--accent-soft);
+  outline-offset: 2px;
 }
 .tt-group-body {
   display: flex;
@@ -203,21 +237,6 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 .tt-combo-item.is-active.is-selected::after { color: #fff; }
 .tt-combo-empty { padding: 10px; color: var(--text-dim); font-size: 14px; }
 
-.tt-check {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  cursor: pointer;
-  user-select: none;
-}
-.tt-check--full { flex: 1 1 100%; margin-top: 2px; }
-.tt-check input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
-.tt-check input:disabled { cursor: not-allowed; }
-.tt-check:has(input:disabled) { opacity: 0.45; cursor: not-allowed; }
-
 /* Recommended-chord quick-picks. */
 .tt-reco {
   flex: 1 1 100%;
@@ -288,8 +307,10 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 }
 
 /* Audition card: timbre select + full-width play buttons (scale/chord/mix). */
-.tt-au-buttons { flex: 1 1 100%; display: flex; flex-direction: column; gap: 8px; }
+.tt-au-buttons { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 8px; }
 .tt-au-play {
+  flex: 1 1 0;
+  min-width: 96px;
   font: inherit;
   font-size: 14px;
   font-weight: 700;

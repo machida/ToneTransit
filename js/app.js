@@ -146,9 +146,9 @@
 
   function cacheEls() {
     [
-      'scaleRoot', 'scaleRootField', 'scaleCombo', 'scaleSearch', 'scaleList', 'noScale', 'scaleNotes',
+      'scaleRoot', 'scaleRootField', 'scaleCombo', 'scaleSearch', 'scaleList', 'scaleToggle', 'scaleNotes',
       'scaleDesc', 'scaleHint',
-      'chordRoot', 'chordRootField', 'chord', 'chordTypeField', 'noChord', 'chordReco', 'chordNotes', 'chordDesc',
+      'chordRoot', 'chordRootField', 'chord', 'chordTypeField', 'chordToggle', 'chordReco', 'chordNotes', 'chordDesc',
       'fretStart', 'fretEnd',
       'auditionCard', 'auTimbreScale', 'auTimbreChord', 'auPlayScale', 'auPlayChord', 'auPlayMix',
       'board', 'sheetTitle', 'sheetInfo', 'dataError'
@@ -408,8 +408,9 @@
     setRadio('displayMode', state.displayMode);
     setRadio('palette', state.palette);
     document.body.classList.toggle('tt-mono', state.palette === 'mono');
-    els.noScale.checked = state.noScale;
-    els.noChord.checked = state.noChord;
+    // Switches are ON when the scale / chord is shown (i.e. NOT the "なし" flag).
+    els.scaleToggle.checked = !state.noScale;
+    els.chordToggle.checked = !state.noChord;
 
     // No scale → there is no key, so the scale search and the (scale) root
     // are both irrelevant; grey them out. Note spelling follows the chord root.
@@ -602,13 +603,14 @@
       state.scaleRoot = this.value; update();
     });
     bindScaleCombo();
-    els.noScale.addEventListener('change', function () {
-      state.noScale = this.checked;
-      if (this.checked && combo.open) closeScaleList(true);
+    els.scaleToggle.addEventListener('change', function () {
+      state.noScale = !this.checked; // switch ON = scale shown
+      if (state.noScale && combo.open) closeScaleList(true);
       update();
     });
-    els.noChord.addEventListener('change', function () {
-      state.noChord = this.checked; update();
+    els.chordToggle.addEventListener('change', function () {
+      state.noChord = !this.checked; // switch ON = chord shown
+      update();
     });
     els.chordRoot.addEventListener('change', function () {
       state.chordRoot = this.value; update();
