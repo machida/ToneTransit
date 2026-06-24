@@ -190,7 +190,7 @@
       </div>
       <div class="tt-board" id="board"></div>
 
-      <p class="tt-legend-guide">四角＝ルート、リング付き＝コードの要(3rd/7th)、青＝コードの音、薄色＝スケールの音。</p>
+      <p class="tt-legend-guide">四角＝ルート、リング付き＝コードの要(3rd/7th)、青＝コードの音、薄色＝スケールの音。<a class="tt-glossary-link" href="#glossary">用語の意味</a></p>
       <div class="tt-legend" aria-label="凡例">
         <span class="tt-legend-item" title="スケール／コードの基準音。すべての度数はここを 1 として数える"><span class="tt-swatch tt-swatch--root"></span>ルート (1)</span>
         <span class="tt-legend-item" title="コードの 3rd と 7th。コードの明暗・機能を決める最重要音"><span class="tt-swatch tt-swatch--guide"></span>ガイドトーン (3rd / 7th)</span>
@@ -201,6 +201,28 @@
 
       <div class="tt-sheet-info" id="sheetInfo"></div>
     </section>
+
+    <details class="tt-glossary" id="glossary">
+      <summary>用語の意味</summary>
+      <dl class="tt-glossary-list">
+        <dt id="glossary-degree">度数</dt>
+        <dd>基準音（ルート）から数えた音の高さの関係。1（ルート）・3・5・7… と数え、♭/♯ で半音の上下を表す。「今のコードに対して何度か」がこのツールの主役。</dd>
+        <dt id="glossary-root">ルート</dt>
+        <dd>スケールやコードの基準音（1度）。指板図では四角で表示する。</dd>
+        <dt id="glossary-guide-tone">ガイドトーン</dt>
+        <dd>コードの 3rd と 7th。長短や機能（明暗・緊張）を決める最重要音。指板図ではリング付きで強調する。</dd>
+        <dt id="glossary-chord-tone">コードトーン</dt>
+        <dd>そのコードを構成する音（例: G7 なら G・B・D・F）。</dd>
+        <dt id="glossary-tension">テンション</dt>
+        <dd>コードには含まれないがスケール上にある音（9th・11th・13th など）。彩りや緊張感を加える。</dd>
+        <dt id="glossary-out">スケール外コードトーン</dt>
+        <dd>コードの構成音なのに、選んだスケールに含まれない音。スケールとコードが噛み合っていないサイン。指板図では破線リングで示す。</dd>
+        <dt id="glossary-diatonic">ダイアトニックコード</dt>
+        <dd>あるスケールの音だけを積み重ねてできるコード群。「おすすめ」コードの自動算出に使う。</dd>
+        <dt id="glossary-mode">モード（旋法）</dt>
+        <dd>メジャースケールを起点に、開始音をずらして得られる音階（ドリアン・リディアンなど）。それぞれ固有の色合いを持つ。</dd>
+      </dl>
+    </details>
   </main>
 
   <div id="toast" class="tt-toast" role="status" aria-live="polite"></div>

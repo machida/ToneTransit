@@ -616,6 +616,33 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 .tt-swatch--chordtone { background: var(--note-chord); }
 .tt-swatch--scale { background: var(--note-scale); }
 .tt-swatch--out { background: var(--note-out); border-style: dashed; }
+.tt-glossary-link { margin-left: 8px; color: var(--accent); font-weight: 700; }
+
+/* Glossary (SPEC-11) */
+.tt-glossary {
+  margin: 22px 0 0;
+  padding: 14px 18px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.tt-glossary > summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--accent-soft);
+  letter-spacing: 0.04em;
+}
+.tt-glossary-list { margin: 14px 0 0; }
+.tt-glossary-list dt { font-weight: 800; color: var(--text); margin-top: 12px; }
+.tt-glossary-list dt:first-child { margin-top: 0; }
+.tt-glossary-list dd {
+  margin: 4px 0 0;
+  color: var(--text-dim);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+/* Briefly flag a term jumped to from the legend link. */
+.tt-glossary-list dt:target { color: var(--accent-soft); }
 
 /* Sheet detail: scale / chord columns (name + formula + notes + description). */
 .tt-sheet-info {

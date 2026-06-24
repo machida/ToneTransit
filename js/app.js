@@ -764,6 +764,13 @@
     var imgBtn = document.getElementById('imgBtn');
     if (imgBtn) imgBtn.addEventListener('click', exportPng);
 
+    // Open the glossary when the legend's "用語の意味" link is followed.
+    var glossaryEl = document.getElementById('glossary');
+    var glossaryLink = document.querySelector('.tt-glossary-link');
+    if (glossaryEl && glossaryLink) {
+      glossaryLink.addEventListener('click', function () { glossaryEl.open = true; });
+    }
+
     // Quiz (SPEC-09): start / next / quit, and tap-to-answer on the board.
     if (els.quizBtn) els.quizBtn.addEventListener('click', startQuiz);
     if (els.quizNext) els.quizNext.addEventListener('click', startQuiz);
