@@ -38,6 +38,12 @@ test('every correct pitch class actually appears on the board', () => {
   q.correctPitchClasses.forEach((pc) => assert.ok(onBoard.has(pc), 'pc ' + pc + ' is on the board'));
 });
 
+test('English quiz (lang=en) returns an English prompt', () => {
+  const q = quizFor(model({ scaleKey: 'major', chordRoot: 'G', chordKey: '7' }), first, 'en');
+  assert.match(q.prompt, /guide tones/i);
+  assert.ok(q.correctPitchClasses.length > 0);
+});
+
 test('quizFor returns null when nothing is shown', () => {
   assert.equal(quizFor(model({ noScale: true, noChord: true }), first), null);
 });

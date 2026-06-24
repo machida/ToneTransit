@@ -33,9 +33,26 @@
     return Object.keys(seen).map(Number);
   }
 
+  // Bilingual prompt strings (self-contained; no i18n dependency for tests).
+  var STR = {
+    ja: {
+      guide: 'ガイドトーン（コードの 3rd / 7th）はどれ？',
+      root: 'ルート（1度）はどれ？',
+      degree: function (chord, deg) { return chord + ' の ' + deg + ' はどれ？'; },
+      out: 'スケールに無いコードトーン（噛み合わない音）はどれ？'
+    },
+    en: {
+      guide: 'Which notes are the guide tones (3rd / 7th)?',
+      root: 'Which note is the root (1)?',
+      degree: function (chord, deg) { return 'Which note is the ' + deg + ' of ' + chord + '?'; },
+      out: 'Which chord tone is outside the scale?'
+    }
+  };
+
   // Returns { prompt, correctPitchClasses } or null when nothing can be asked.
-  function quizFor(model, rng) {
+  function quizFor(model, rng, lang) {
     rng = rng || Math.random;
+    var s = STR[lang === 'en' ? 'en' : 'ja'];
     if (model.noScale && model.noChord) return null;
 
     var notes = uniqueVisible(model);
@@ -44,28 +61,25 @@
 
     var guides = notes.filter(function (c) { return c.isGuide; });
     if (guides.length) {
-      candidates.push({ prompt: 'ガイドトーン（コードの 3rd / 7th）はどれ？', pcs: pcSet(guides) });
+      candidates.push({ prompt: s.guide, pcs: pcSet(guides) });
     }
 
     var roots = notes.filter(function (c) { return c.isChordRoot; });
     if (roots.length) {
-      candidates.push({ prompt: 'ルート（1度）はどれ？', pcs: pcSet(roots) });
+      candidates.push({ prompt: s.root, pcs: pcSet(roots) });
     }
 
     if (!model.noChord) {
       var cts = notes.filter(function (c) { return c.isChordTone && !c.isChordRoot; });
       if (cts.length) {
         var pick = cts[Math.floor(rng() * cts.length) % cts.length];
-        candidates.push({
-          prompt: model.chordName + ' の ' + pick.degree + ' はどれ？',
-          pcs: [pick.pitchClass]
-        });
+        candidates.push({ prompt: s.degree(model.chordName, pick.degree), pcs: [pick.pitchClass] });
       }
     }
 
     var outs = notes.filter(function (c) { return c.outOfScale; });
     if (outs.length) {
-      candidates.push({ prompt: 'スケールに無いコードトーン（噛み合わない音）はどれ？', pcs: pcSet(outs) });
+      candidates.push({ prompt: s.out, pcs: pcSet(outs) });
     }
 
     if (!candidates.length) return null;

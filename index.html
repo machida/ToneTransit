@@ -15,49 +15,50 @@
     <div class="tt-brand">
       <div class="tt-brand-text">
         <h1>Tone<span class="tt-accent">Transit</span></h1>
-        <p>その音が、今どんな意味を持つのか。</p>
+        <p data-i18n="app.tagline">その音が、今どんな意味を持つのか。</p>
       </div>
-      <button type="button" id="tourBtn" class="tt-help-btn">？ 使い方</button>
+      <button type="button" id="tourBtn" class="tt-help-btn" data-i18n="app.help">？ 使い方</button>
     </div>
   </header>
 
   <main class="tt-main">
     <div class="tt-intro">
       <ol class="tt-steps" aria-label="使い方3ステップ">
-        <li><span class="tt-step-n">1</span><span>スケールとコードを選ぶ</span></li>
-        <li><span class="tt-step-n">2</span><span>各音が「今のコードに対して何度か」を色と形で表示</span></li>
-        <li><span class="tt-step-n">3</span><span>音で確認して、共有・印刷</span></li>
+        <li><span class="tt-step-n">1</span><span data-i18n="step.1">スケールとコードを選ぶ</span></li>
+        <li><span class="tt-step-n">2</span><span data-i18n="step.2">各音が「今のコードに対して何度か」を色と形で表示</span></li>
+        <li><span class="tt-step-n">3</span><span data-i18n="step.3">音で確認して、共有・印刷</span></li>
       </ol>
       <div class="tt-presets" id="presets" aria-label="例を試す">
-        <span class="tt-presets-label">例を試す</span>
+        <span class="tt-presets-label" data-i18n="presets.label">例を試す</span>
       </div>
     </div>
     <section class="tt-controls" aria-label="設定">
       <section class="tt-group">
         <div class="tt-group-head">
-          <h3 class="tt-group-title">スケール</h3>
+          <h3 class="tt-group-title" data-i18n="scale.heading">スケール</h3>
           <label class="tt-switch">
-            <span class="tt-switch-label">表示</span>
+            <span class="tt-switch-label" data-i18n="scale.show">表示</span>
             <input type="checkbox" id="scaleToggle" class="tt-switch-input" role="switch"
-                   checked aria-label="スケールを表示（オフでコードトーンのみ）">
+                   checked data-i18n-aria="scale.showAria" aria-label="スケールを表示（オフでコードトーンのみ）">
             <span class="tt-switch-track" aria-hidden="true"><span class="tt-switch-thumb"></span></span>
           </label>
         </div>
         <div class="tt-group-body">
           <div class="tt-field" id="scaleRootField">
-            <label for="scaleRoot">ルート</label>
+            <label for="scaleRoot" data-i18n="scale.root">ルート</label>
             <select id="scaleRoot"></select>
           </div>
           <div class="tt-field tt-field--grow">
-            <label for="scaleSearch">スケール</label>
+            <label for="scaleSearch" data-i18n="scale.label">スケール</label>
             <div class="tt-combo" id="scaleCombo">
               <input type="text" id="scaleSearch" class="tt-combo-input" role="combobox"
                      aria-expanded="false" aria-controls="scaleList" aria-autocomplete="list"
-                     autocomplete="off" spellcheck="false" placeholder="検索（例: ドリアン / lydian）">
+                     autocomplete="off" spellcheck="false"
+                     data-i18n-ph="scale.search.ph" placeholder="検索（例: ドリアン / lydian）">
               <ul class="tt-combo-list" id="scaleList" role="listbox" hidden></ul>
             </div>
           </div>
-          <p class="tt-hint" id="scaleHint" hidden>スケールなし：音名の綴りはコードのルート基準で表示します。</p>
+          <p class="tt-hint" id="scaleHint" hidden data-i18n="scale.hint">スケールなし：音名の綴りはコードのルート基準で表示します。</p>
           <div class="tt-notes" id="scaleNotes" aria-label="スケール構成音"></div>
           <p class="tt-desc" id="scaleDesc"></p>
         </div>
@@ -65,21 +66,21 @@
 
       <section class="tt-group">
         <div class="tt-group-head">
-          <h3 class="tt-group-title">コード</h3>
+          <h3 class="tt-group-title" data-i18n="chord.heading">コード</h3>
           <label class="tt-switch">
-            <span class="tt-switch-label">表示</span>
+            <span class="tt-switch-label" data-i18n="chord.show">表示</span>
             <input type="checkbox" id="chordToggle" class="tt-switch-input" role="switch"
-                   checked aria-label="コードを表示（オフでスケールのみ）">
+                   checked data-i18n-aria="chord.showAria" aria-label="コードを表示（オフでスケールのみ）">
             <span class="tt-switch-track" aria-hidden="true"><span class="tt-switch-thumb"></span></span>
           </label>
         </div>
         <div class="tt-group-body">
           <div class="tt-field" id="chordRootField">
-            <label for="chordRoot">コードルート</label>
+            <label for="chordRoot" data-i18n="chord.root">コードルート</label>
             <select id="chordRoot"></select>
           </div>
           <div class="tt-field tt-field--grow" id="chordTypeField">
-            <label for="chord">種類</label>
+            <label for="chord" data-i18n="chord.type">種類</label>
             <select id="chord"></select>
           </div>
           <div class="tt-reco" id="chordReco" aria-label="おすすめコード"></div>
@@ -89,19 +90,19 @@
       </section>
 
       <section class="tt-group" id="auditionCard">
-        <div class="tt-group-head"><h3 class="tt-group-title">試聴</h3></div>
+        <div class="tt-group-head"><h3 class="tt-group-title" data-i18n="audition.heading">試聴</h3></div>
         <div class="tt-group-body">
           <div class="tt-field tt-field--grow">
-            <label for="auTimbreScale">スケールの音色</label>
+            <label for="auTimbreScale" data-i18n="audition.scaleTimbre">スケールの音色</label>
             <select id="auTimbreScale">
-              <option value="piano">ピアノ</option>
-              <option value="epiano">エレピ</option>
-              <option value="organ">オルガン</option>
-              <option value="simple">シンプル（合成）</option>
+              <option value="piano" data-i18n="timbre.piano">ピアノ</option>
+              <option value="epiano" data-i18n="timbre.epiano">エレピ</option>
+              <option value="organ" data-i18n="timbre.organ">オルガン</option>
+              <option value="simple" data-i18n="timbre.simple">シンプル（合成）</option>
             </select>
           </div>
           <div class="tt-field">
-            <span class="tt-field-label">オクターブ</span>
+            <span class="tt-field-label" data-i18n="audition.octave">オクターブ</span>
             <div class="tt-segments" role="radiogroup" aria-label="スケールのオクターブ">
               <label class="tt-segment"><input type="radio" name="scaleOctave" value="3">3</label>
               <label class="tt-segment"><input type="radio" name="scaleOctave" value="4">4</label>
@@ -109,16 +110,16 @@
             </div>
           </div>
           <div class="tt-field tt-field--grow">
-            <label for="auTimbreChord">コードの音色</label>
+            <label for="auTimbreChord" data-i18n="audition.chordTimbre">コードの音色</label>
             <select id="auTimbreChord">
-              <option value="piano">ピアノ</option>
-              <option value="epiano">エレピ</option>
-              <option value="organ">オルガン</option>
-              <option value="simple">シンプル（合成）</option>
+              <option value="piano" data-i18n="timbre.piano">ピアノ</option>
+              <option value="epiano" data-i18n="timbre.epiano">エレピ</option>
+              <option value="organ" data-i18n="timbre.organ">オルガン</option>
+              <option value="simple" data-i18n="timbre.simple">シンプル（合成）</option>
             </select>
           </div>
           <div class="tt-field">
-            <span class="tt-field-label">オクターブ</span>
+            <span class="tt-field-label" data-i18n="audition.octave">オクターブ</span>
             <div class="tt-segments" role="radiogroup" aria-label="コードのオクターブ">
               <label class="tt-segment"><input type="radio" name="chordOctave" value="3">3</label>
               <label class="tt-segment"><input type="radio" name="chordOctave" value="4">4</label>
@@ -126,9 +127,9 @@
             </div>
           </div>
           <div class="tt-au-buttons">
-            <button type="button" class="tt-au-play" id="auPlayScale">▶ スケール</button>
-            <button type="button" class="tt-au-play" id="auPlayChord">▶ コード</button>
-            <button type="button" class="tt-au-play tt-au-play--mix" id="auPlayMix">▶ ミックス</button>
+            <button type="button" class="tt-au-play" id="auPlayScale" data-i18n="audition.playScale">▶ スケール</button>
+            <button type="button" class="tt-au-play" id="auPlayChord" data-i18n="audition.playChord">▶ コード</button>
+            <button type="button" class="tt-au-play tt-au-play--mix" id="auPlayMix" data-i18n="audition.playMix">▶ ミックス</button>
           </div>
         </div>
       </section>
@@ -141,22 +142,22 @@
     <div class="tt-preview-bar">
       <div class="tt-preview-bar__left">
         <div class="tt-tool">
-          <span class="tt-tool-label">表記</span>
+          <span class="tt-tool-label" data-i18n="tool.notation">表記</span>
           <div class="tt-segments" role="radiogroup" aria-label="音符の表記">
-            <label class="tt-segment"><input type="radio" name="displayMode" value="name">音名</label>
-            <label class="tt-segment"><input type="radio" name="displayMode" value="degree">度数</label>
-            <label class="tt-segment"><input type="radio" name="displayMode" value="name-degree">音名＋度数</label>
+            <label class="tt-segment"><input type="radio" name="displayMode" value="name"><span data-i18n="tool.notation.name">音名</span></label>
+            <label class="tt-segment"><input type="radio" name="displayMode" value="degree"><span data-i18n="tool.notation.degree">度数</span></label>
+            <label class="tt-segment"><input type="radio" name="displayMode" value="name-degree"><span data-i18n="tool.notation.nameDegree">音名＋度数</span></label>
           </div>
         </div>
         <div class="tt-tool">
-          <span class="tt-tool-label">表示量</span>
+          <span class="tt-tool-label" data-i18n="tool.detail">表示量</span>
           <div class="tt-segments" role="radiogroup" aria-label="表示量">
-            <label class="tt-segment"><input type="radio" name="level" value="beginner">かんたん</label>
-            <label class="tt-segment"><input type="radio" name="level" value="advanced">くわしく</label>
+            <label class="tt-segment"><input type="radio" name="level" value="beginner"><span data-i18n="tool.detail.beginner">かんたん</span></label>
+            <label class="tt-segment"><input type="radio" name="level" value="advanced"><span data-i18n="tool.detail.advanced">くわしく</span></label>
           </div>
         </div>
         <div class="tt-tool">
-          <span class="tt-tool-label">フレット範囲</span>
+          <span class="tt-tool-label" data-i18n="tool.fretRange">フレット範囲</span>
           <div class="tt-range-inputs">
             <input type="number" id="fretStart" min="0" max="24" inputmode="numeric" aria-label="開始フレット">
             <span aria-hidden="true">–</span>
@@ -164,26 +165,33 @@
           </div>
         </div>
         <div class="tt-tool">
-          <span class="tt-tool-label">配色</span>
+          <span class="tt-tool-label" data-i18n="tool.palette">配色</span>
           <div class="tt-segments" role="radiogroup" aria-label="配色">
-            <label class="tt-segment"><input type="radio" name="palette" value="color">カラー</label>
-            <label class="tt-segment"><input type="radio" name="palette" value="mono">モノトーン</label>
+            <label class="tt-segment"><input type="radio" name="palette" value="color"><span data-i18n="tool.palette.color">カラー</span></label>
+            <label class="tt-segment"><input type="radio" name="palette" value="mono"><span data-i18n="tool.palette.mono">モノトーン</span></label>
           </div>
         </div>
         <div class="tt-tool">
-          <span class="tt-tool-label">テーマ</span>
+          <span class="tt-tool-label" data-i18n="tool.theme">テーマ</span>
           <div class="tt-segments" role="radiogroup" aria-label="テーマ">
-            <label class="tt-segment"><input type="radio" name="theme" value="auto">自動</label>
-            <label class="tt-segment"><input type="radio" name="theme" value="light">ライト</label>
-            <label class="tt-segment"><input type="radio" name="theme" value="dark">ダーク</label>
+            <label class="tt-segment"><input type="radio" name="theme" value="auto"><span data-i18n="tool.theme.auto">自動</span></label>
+            <label class="tt-segment"><input type="radio" name="theme" value="light"><span data-i18n="tool.theme.light">ライト</span></label>
+            <label class="tt-segment"><input type="radio" name="theme" value="dark"><span data-i18n="tool.theme.dark">ダーク</span></label>
+          </div>
+        </div>
+        <div class="tt-tool">
+          <span class="tt-tool-label" data-i18n="app.lang">言語</span>
+          <div class="tt-segments" role="radiogroup" aria-label="言語">
+            <label class="tt-segment"><input type="radio" name="lang" value="ja">日本語</label>
+            <label class="tt-segment"><input type="radio" name="lang" value="en">EN</label>
           </div>
         </div>
       </div>
       <div class="tt-preview-bar__right">
-        <button type="button" id="quizBtn" class="tt-btn tt-btn--ghost">クイズ</button>
-        <button type="button" id="imgBtn" class="tt-btn tt-btn--ghost">画像を保存</button>
-        <button type="button" id="printBtn" class="tt-btn">印刷 / PDF</button>
-        <button type="button" id="shareBtn" class="tt-btn tt-btn--ghost">リンクをコピー</button>
+        <button type="button" id="quizBtn" class="tt-btn tt-btn--ghost" data-i18n="action.quiz">クイズ</button>
+        <button type="button" id="imgBtn" class="tt-btn tt-btn--ghost" data-i18n="action.image">画像を保存</button>
+        <button type="button" id="printBtn" class="tt-btn" data-i18n="action.print">印刷 / PDF</button>
+        <button type="button" id="shareBtn" class="tt-btn tt-btn--ghost" data-i18n="action.share">リンクをコピー</button>
       </div>
     </div>
 
@@ -195,26 +203,26 @@
         <span class="tt-quiz-q" id="quizQ"></span>
         <span class="tt-quiz-feedback" id="quizFeedback" aria-live="polite"></span>
         <span class="tt-quiz-actions">
-          <button type="button" id="quizNext" class="tt-quiz-btn">次の問題</button>
-          <button type="button" id="quizClose" class="tt-quiz-btn tt-quiz-btn--ghost">やめる</button>
+          <button type="button" id="quizNext" class="tt-quiz-btn" data-i18n="quiz.next">次の問題</button>
+          <button type="button" id="quizClose" class="tt-quiz-btn tt-quiz-btn--ghost" data-i18n="quiz.close">やめる</button>
         </span>
       </div>
       <div class="tt-board" id="board"></div>
 
-      <p class="tt-legend-guide">四角＝ルート、リング付き＝コードの要(3rd/7th)、青＝コードの音、薄色＝スケールの音。<a class="tt-glossary-link" href="#glossary">用語の意味</a></p>
+      <p class="tt-legend-guide"><span data-i18n="legend.guide">四角＝ルート、リング付き＝コードの要(3rd/7th)、青＝コードの音、薄色＝スケールの音。</span><a class="tt-glossary-link" href="#glossary" data-i18n="legend.glossary">用語の意味</a></p>
       <div class="tt-legend" aria-label="凡例">
-        <span class="tt-legend-item" title="スケール／コードの基準音。すべての度数はここを 1 として数える"><span class="tt-swatch tt-swatch--root"></span>ルート (1)</span>
-        <span class="tt-legend-item" title="コードの 3rd と 7th。コードの明暗・機能を決める最重要音"><span class="tt-swatch tt-swatch--guide"></span>ガイドトーン (3rd / 7th)</span>
-        <span class="tt-legend-item" title="今のコードの構成音"><span class="tt-swatch tt-swatch--chordtone"></span>コードトーン</span>
-        <span class="tt-legend-item" title="コードには含まれないがスケール上にある音（テンション＝緊張色）"><span class="tt-swatch tt-swatch--scale"></span>スケール音 / テンション</span>
-        <span class="tt-legend-item" title="コードの構成音だがスケールに無い＝スケールとコードが噛み合っていない音"><span class="tt-swatch tt-swatch--out"></span>コードトーン（スケール外）</span>
+        <span class="tt-legend-item" title="スケール／コードの基準音。すべての度数はここを 1 として数える"><span class="tt-swatch tt-swatch--root"></span><span data-i18n="legend.root">ルート (1)</span></span>
+        <span class="tt-legend-item" title="コードの 3rd と 7th。コードの明暗・機能を決める最重要音"><span class="tt-swatch tt-swatch--guide"></span><span data-i18n="legend.guideTone">ガイドトーン (3rd / 7th)</span></span>
+        <span class="tt-legend-item" title="今のコードの構成音"><span class="tt-swatch tt-swatch--chordtone"></span><span data-i18n="legend.chordTone">コードトーン</span></span>
+        <span class="tt-legend-item" title="コードには含まれないがスケール上にある音（テンション＝緊張色）"><span class="tt-swatch tt-swatch--scale"></span><span data-i18n="legend.scale">スケール音 / テンション</span></span>
+        <span class="tt-legend-item" title="コードの構成音だがスケールに無い＝スケールとコードが噛み合っていない音"><span class="tt-swatch tt-swatch--out"></span><span data-i18n="legend.out">コードトーン（スケール外）</span></span>
       </div>
 
       <div class="tt-sheet-info" id="sheetInfo"></div>
     </section>
 
     <details class="tt-glossary" id="glossary">
-      <summary>用語の意味</summary>
+      <summary>用語の意味 / Glossary</summary>
       <dl class="tt-glossary-list">
         <dt id="glossary-degree">度数</dt>
         <dd>基準音（ルート）から数えた音の高さの関係。1（ルート）・3・5・7… と数え、♭/♯ で半音の上下を表す。「今のコードに対して何度か」がこのツールの主役。</dd>
@@ -246,6 +254,7 @@
   <script src="assets/sound/0000_piano.js"></script>
   <script src="assets/sound/0040_epiano.js"></script>
   <script src="assets/sound/0160_organ.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/presets.js"></script>
   <script src="js/summary.js"></script>

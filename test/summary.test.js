@@ -41,6 +41,14 @@ test('no scale and no chord: a sensible empty message', () => {
   assert.match(s, /スケールもコードも/);
 });
 
+test('English summary (lang=en) describes the same facts', () => {
+  const m = fretboard.buildModel(makeState({ scaleKey: 'major', scaleRoot: 'C', chordRoot: 'G', chordKey: '7' }), data);
+  const s = summary(m, 'en');
+  assert.match(s, /Guide tones/);
+  assert.match(s, /B\(3\)/);
+  assert.match(s, /good fit/);
+});
+
 test('summary never returns an empty string for valid states', () => {
   ['major', 'dorian', 'altered', 'blues'].forEach((scaleKey) => {
     const s = build({ scaleKey, chordRoot: 'G', chordKey: '7' });

@@ -30,6 +30,7 @@
     displayMode: 'name-degree', // label style: name | degree | name-degree
     level: 'advanced',          // detail level: beginner | advanced
     theme: 'auto',              // UI theme: auto | light | dark
+    lang: 'ja',                 // UI language: ja | en (default from browser)
     palette: 'color',           // preview palette: color | mono
     timbreScale: 'piano',       // audition timbres: piano | epiano | organ | simple
     timbreChord: 'piano',
@@ -51,6 +52,7 @@
     if (p.get('mode')) state.displayMode = p.get('mode');
     if (p.get('lvl')) state.level = p.get('lvl');
     if (p.get('th')) state.theme = p.get('th');
+    if (p.get('lang')) state.lang = p.get('lang');
     if (p.get('pal')) state.palette = p.get('pal');
     if (p.get('tone')) { state.timbreScale = state.timbreChord = p.get('tone'); } // legacy single
     if (p.get('toneS')) state.timbreScale = p.get('toneS');
@@ -70,6 +72,7 @@
     }
     if (['beginner', 'advanced'].indexOf(state.level) < 0) state.level = 'advanced';
     if (['auto', 'light', 'dark'].indexOf(state.theme) < 0) state.theme = 'auto';
+    if (['ja', 'en'].indexOf(state.lang) < 0) state.lang = 'ja';
     if (['color', 'mono'].indexOf(state.palette) < 0) state.palette = 'color';
     var timbres = ['piano', 'epiano', 'organ', 'simple'];
     if (timbres.indexOf(state.timbreScale) < 0) state.timbreScale = 'piano';
@@ -122,6 +125,7 @@
     p.set('mode', state.displayMode);
     if (state.level !== 'advanced') p.set('lvl', state.level);
     if (state.theme !== 'auto') p.set('th', state.theme);
+    if (state.lang !== 'ja') p.set('lang', state.lang);
     if (state.palette === 'mono') p.set('pal', 'mono');
     if (state.timbreScale !== 'piano') p.set('toneS', state.timbreScale);
     if (state.timbreChord !== 'piano') p.set('toneC', state.timbreChord);
@@ -417,6 +421,7 @@
     setRadio('displayMode', state.displayMode);
     setRadio('level', state.level);
     setRadio('theme', state.theme);
+    setRadio('lang', state.lang);
     setRadio('palette', state.palette);
     document.body.classList.toggle('tt-mono', state.palette === 'mono');
     applyTheme();
@@ -447,6 +452,33 @@
       els.auPlayChord.disabled = state.noChord;
       els.auPlayMix.disabled = state.noScale || state.noChord; // needs both
     }
+  }
+
+  // ---- i18n (SPEC-15) ----------------------------------------------------
+
+  function t(key, vars) {
+    return (TT.i18n && TT.i18n.t) ? TT.i18n.t(key, vars, state.lang) : key;
+  }
+
+  function detectLang() {
+    var nav = global.navigator;
+    var l = nav && (nav.language || (nav.languages && nav.languages[0])) || 'ja';
+    return /^en/i.test(l) ? 'en' : 'ja';
+  }
+
+  // Applies the current language to all static [data-i18n*] nodes + <html lang>.
+  function applyI18n() {
+    if (TT.i18n) TT.i18n.setLang(state.lang);
+    document.documentElement.lang = state.lang;
+    var set = function (attr, apply) {
+      var nodes = document.querySelectorAll('[' + attr + ']');
+      Array.prototype.forEach.call(nodes, function (el) {
+        apply(el, t(el.getAttribute(attr)));
+      });
+    };
+    set('data-i18n', function (el, v) { el.textContent = v; });
+    set('data-i18n-ph', function (el, v) { el.setAttribute('placeholder', v); });
+    set('data-i18n-aria', function (el, v) { el.setAttribute('aria-label', v); });
   }
 
   // ---- Theme (SPEC-14) ---------------------------------------------------
@@ -659,7 +691,7 @@
     }
 
     els.sheetTitle.textContent = titleFor(model);
-    if (els.summary && TT.summary) els.summary.textContent = TT.summary(model);
+    if (els.summary && TT.summary) els.summary.textContent = TT.summary(model, state.lang);
     els.sheetInfo.innerHTML = buildSheetInfo(state, model);
     global.document.title = titleFor(model) + ' — ToneTransit';
 
@@ -709,14 +741,14 @@
 
   function startQuiz() {
     if (!TT.quiz) return;
-    var q = TT.quiz.quizFor(fretboard.buildModel(state, data));
-    if (!q) { flash('この盤面では出題できません'); return; }
+    var q = TT.quiz.quizFor(fretboard.buildModel(state, data), null, state.lang);
+    if (!q) { flash(t('quiz.none')); return; }
     quiz.active = true;
     quiz.answer = q.correctPitchClasses;
     clearQuizMarks();
     clearPlayHighlights();
     els.quiz.hidden = false;
-    els.quizQ.textContent = q.prompt + '（盤上の音をタップ）';
+    els.quizQ.textContent = q.prompt + t('quiz.tapHint');
     els.quizFeedback.textContent = '';
     els.quizFeedback.className = 'tt-quiz-feedback';
   }
@@ -740,12 +772,12 @@
     var pc = parseInt(g.getAttribute('data-pc'), 10);
     if (quiz.answer.indexOf(pc) >= 0) {
       quiz.answer.forEach(function (p) { markPc(p, 'is-correct'); });
-      els.quizFeedback.textContent = '正解！';
+      els.quizFeedback.textContent = t('quiz.correct');
       els.quizFeedback.className = 'tt-quiz-feedback is-ok';
       quiz.active = false; // answered; 次の問題 で再開
     } else {
       markPc(pc, 'is-wrong');
-      els.quizFeedback.textContent = 'ちがう…もう一度';
+      els.quizFeedback.textContent = t('quiz.wrong');
       els.quizFeedback.className = 'tt-quiz-feedback is-ng';
     }
   }
@@ -781,6 +813,7 @@
     bindRadio('displayMode', function (v) { state.displayMode = v; update(); });
     bindRadio('level', function (v) { state.level = v; update(); });
     bindRadio('theme', function (v) { state.theme = v; applyTheme(); persist(); });
+    bindRadio('lang', function (v) { state.lang = v; applyI18n(); update(); });
     bindRadio('palette', function (v) { state.palette = v; update(); });
 
     document.getElementById('printBtn').addEventListener('click', function () {
@@ -889,7 +922,7 @@
 
   function exportPng() {
     var svg = els.board.querySelector('svg');
-    if (!svg) { flash('画像にできる図がありません'); return; }
+    if (!svg) { flash(t('toast.imgNone')); return; }
     var clone = svg.cloneNode(true);
     inlineStyles(svg, clone);
     var vb = svg.viewBox && svg.viewBox.baseVal;
@@ -909,14 +942,14 @@
       c.drawImage(img, 0, 0, canvas.width, canvas.height);
       if (canvas.toBlob) {
         canvas.toBlob(function (blob) {
-          if (blob) { downloadBlob(blob, exportImageName() + '.png'); flash('画像を保存しました'); }
-          else flash('画像の生成に失敗しました');
+          if (blob) { downloadBlob(blob, exportImageName() + '.png'); flash(t('toast.imgSaved')); }
+          else flash(t('toast.imgFail'));
         }, 'image/png');
       } else {
-        flash('このブラウザは画像保存に未対応です');
+        flash(t('toast.imgUnsupported'));
       }
     };
-    img.onerror = function () { flash('画像の生成に失敗しました'); };
+    img.onerror = function () { flash(t('toast.imgFail')); };
     img.src = src;
   }
 
@@ -924,7 +957,7 @@
     var url = global.location.href;
     if (global.navigator.clipboard) {
       global.navigator.clipboard.writeText(url).then(function () {
-        flash('リンクをコピーしました');
+        flash(t('toast.shared'));
       }, function () { flash(url); });
     } else {
       flash(url);
@@ -1021,12 +1054,12 @@
       var skip = document.createElement('button');
       skip.type = 'button';
       skip.className = 'tt-coach-skip';
-      skip.textContent = '閉じる';
+      skip.textContent = t('coach.close');
       skip.addEventListener('click', close);
       var next = document.createElement('button');
       next.type = 'button';
       next.className = 'tt-coach-next';
-      next.textContent = last ? '使ってみる' : '次へ';
+      next.textContent = last ? t('coach.done') : t('coach.next');
       next.addEventListener('click', function () {
         if (last) { close(); return; }
         i++; render(); place();
@@ -1071,12 +1104,14 @@
 
   function boot() {
     cacheEls();
+    state.lang = detectLang(); // browser default; storage/URL override below
     loadData().then(function () {
       readStorage();
       readUrl(); // URL wins over storage
       normalizeState();
       applyTheme(); // set theme before first paint to avoid a flash
       watchSystemTheme();
+      applyI18n();   // translate static chrome before first paint
       populateSelects();
       bindControls();
       renderPresets();
