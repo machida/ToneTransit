@@ -75,6 +75,22 @@ test('guide-tone markers get an extra ring', () => {
   assert.ok(rings.length > 0, 'guide tones should draw a ring');
 });
 
+test('an out-of-scale guide tone keeps BOTH rings (solid guide + dashed out)', () => {
+  // C major over E7: G♯ is the 3rd (a guide tone) but not in C major.
+  const model = fretboard.buildModel(makeState({ scaleKey: 'major', chordRoot: 'E', chordKey: '7' }), data);
+  const svg = renderer.render(model);
+  const outGuide = allNodes(svg).filter((n) => {
+    const cls = classOf(n).split(' ');
+    return cls.indexOf('tt-guide') >= 0 && cls.indexOf('tt-out') >= 0;
+  });
+  assert.ok(outGuide.length > 0, 'expected an out-of-scale guide tone group');
+  outGuide.forEach((g) => {
+    const rings = g.childNodes.filter((c) => classOf(c).split(' ').indexOf('tt-ring') >= 0);
+    assert.equal(rings.length, 2, 'should draw a guide ring and a dashed out ring');
+    assert.ok(rings.some((r) => classOf(r).split(' ').indexOf('tt-ring--out') >= 0), 'one ring is dashed-out');
+  });
+});
+
 test('name-degree mode renders two text labels per note', () => {
   const model = fretboard.buildModel(makeState({ displayMode: 'name-degree', noScale: true, chordRoot: 'G', chordKey: '7' }), data);
   const svg = renderer.render(model);

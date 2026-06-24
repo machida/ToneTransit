@@ -52,6 +52,19 @@ test('buildModel swaps an inverted fret range', () => {
   m.strings.forEach((s) => assert.equal(s.cells.length, 5));
 });
 
+test('buildModel clamps an out-of-range fret span to 0..24', () => {
+  const m = fretboard.buildModel(makeState({ fretStart: -5, fretEnd: 999 }), data);
+  assert.equal(m.fretStart, 0);
+  assert.equal(m.fretEnd, 24);
+  m.strings.forEach((s) => assert.equal(s.cells.length, 25));
+});
+
+test('buildModel coerces non-numeric fret values without crashing', () => {
+  const m = fretboard.buildModel(makeState({ fretStart: 'abc', fretEnd: '7' }), data);
+  assert.equal(m.fretStart, 0);
+  assert.equal(m.fretEnd, 7);
+});
+
 test('buildModel exposes open strings (fret 0) when range starts at 0', () => {
   const m = fretboard.buildModel(makeState({ fretStart: 0, fretEnd: 3 }), data);
   m.strings.forEach((s) => assert.equal(s.cells[0].fret, 0));

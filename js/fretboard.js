@@ -21,6 +21,15 @@
     { label: 'E', pitchClass: 4 }
   ];
 
+  var MAX_FRET = 24;
+
+  // Coerces any input to an integer fret in [0, MAX_FRET]; NaN becomes 0.
+  function clampFret(v) {
+    var n = parseInt(v, 10);
+    if (isNaN(n)) n = 0;
+    return Math.max(0, Math.min(MAX_FRET, n));
+  }
+
   // Parses a chord symbol such as "Dm7", "G7", "Cmaj7", "F#m7b5" into a
   // { root, chordKey, symbol } object, using the chord aliases from data.
   function parseChordSymbol(symbol, chords) {
@@ -85,8 +94,12 @@
     }
     var chordMap = noChord ? {} : theory.chordDegreeMap(chord);
 
-    var start = Math.max(0, Math.min(state.fretStart, state.fretEnd));
-    var end = Math.max(state.fretStart, state.fretEnd);
+    // Clamp to a real fretboard (0–24) and order the range, so a stale share
+    // link or bad storage (e.g. ?from=0&to=999) can never blow up the drawing.
+    var lo = clampFret(state.fretStart);
+    var hi = clampFret(state.fretEnd);
+    var start = Math.min(lo, hi);
+    var end = Math.max(lo, hi);
 
     var strings = TUNING.map(function (str) {
       var cells = [];

@@ -152,15 +152,18 @@
       g.appendChild(el('circle', { cx: cx, cy: cy, r: L.radius, class: 'tt-shape' }));
     }
 
-    // Outer ring: dashed = chord tone outside the scale; solid = guide tone
-    // (same fill colour as a chord tone, distinguished by the ring).
-    if (cell.outOfScale) {
-      g.appendChild(el('circle', { cx: cx, cy: cy, r: L.radius + 4, class: 'tt-ring tt-ring--out' }));
-    } else if (cell.isGuide) {
+    // Rings are independent: a guide tone gets a solid ring, a chord tone
+    // outside the scale gets a dashed ring. A note can be BOTH (an out-of-scale
+    // 3rd / 7th), so the dashed ring sits one step further out and neither is
+    // hidden.
+    if (cell.isGuide) {
       g.appendChild(el('circle', { cx: cx, cy: cy, r: L.radius + 4, class: 'tt-ring' }));
     }
+    if (cell.outOfScale) {
+      var outR = cell.isGuide ? L.radius + 7 : L.radius + 4;
+      g.appendChild(el('circle', { cx: cx, cy: cy, r: outR, class: 'tt-ring tt-ring--out' }));
+    }
 
-    var primary = labelFor(cell, mode);
     if (mode === 'name-degree') {
       g.appendChild(el('text', {
         x: cx, y: cy - 1, class: 'tt-label tt-label-main', 'text-anchor': 'middle'
@@ -171,7 +174,7 @@
     } else {
       g.appendChild(el('text', {
         x: cx, y: cy + 4, class: 'tt-label', 'text-anchor': 'middle'
-      }, primary));
+      }, labelFor(cell, mode)));
     }
 
     svg.appendChild(g);

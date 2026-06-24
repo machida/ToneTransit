@@ -70,6 +70,14 @@
     if (timbres.indexOf(state.timbreChord) < 0) state.timbreChord = 'piano';
     if ([3, 4, 5].indexOf(state.octaveScale) < 0) state.octaveScale = 4;
     if ([3, 4, 5].indexOf(state.octaveChord) < 0) state.octaveChord = 3;
+    // Roots: keep any spelling theory understands (incl. sharps from a chord
+    // symbol), but fall back when it's junk so the <select> / spelling never
+    // get a value they can't represent.
+    state.scaleRoot = normalizeRoot(state.scaleRoot, 'C');
+    state.chordRoot = normalizeRoot(state.chordRoot, 'G');
+    // Fret range: integers within 0–24 (buildModel orders them).
+    state.fretStart = clampFret(state.fretStart);
+    state.fretEnd = clampFret(state.fretEnd);
     // Unknown scale / chord keys fall back to a valid default.
     if (!data.scales[state.scaleKey]) {
       state.scaleKey = data.scales.major ? 'major' : Object.keys(data.scales)[0];
@@ -77,6 +85,10 @@
     if (!data.chords[state.chordKey]) {
       state.chordKey = data.chords['7'] ? '7' : Object.keys(data.chords)[0];
     }
+  }
+
+  function normalizeRoot(root, fallback) {
+    return (root != null && theory.NOTE_INDEX[root] != null) ? root : fallback;
   }
 
   function readStorage() {
@@ -334,6 +346,10 @@
           e.preventDefault();
           selectScale(combo.items[combo.highlight].dataset.key);
         }
+      } else if (e.key === 'Home') {
+        if (combo.open && combo.items.length) { e.preventDefault(); setHighlight(0); }
+      } else if (e.key === 'End') {
+        if (combo.open && combo.items.length) { e.preventDefault(); setHighlight(combo.items.length - 1); }
       } else if (e.key === 'Escape') {
         if (combo.open) { e.preventDefault(); closeScaleList(true); }
       }
@@ -348,11 +364,8 @@
 
   function moveHighlight(dir) {
     if (!combo.items.length) return;
-    var idx = combo.highlight;
-    do {
-      idx = (idx + dir + combo.items.length) % combo.items.length;
-    } while (false);
-    setHighlight(idx);
+    var n = combo.items.length;
+    setHighlight((combo.highlight + dir + n) % n);
   }
 
   // ---- Radio group helpers (label style) --------------------------------
@@ -496,10 +509,20 @@
     return intervals.map(function (iv) { return theory.noteName(pc + iv, flats); });
   }
 
+  // Escapes text before it goes into an innerHTML string. The bundled data is
+  // trusted today, but note names / degrees / descriptions are interpolated
+  // raw, so this keeps a future user-supplied or shared dataset from injecting
+  // markup.
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
   function noteListHTML(names, degrees) {
     var chips = names.map(function (name, i) {
-      var deg = degrees ? '<span class="tt-note-deg">' + degrees[i] + '</span>' : '';
-      return '<span class="tt-note-chip">' + name + deg + '</span>';
+      var deg = degrees ? '<span class="tt-note-deg">' + esc(degrees[i]) + '</span>' : '';
+      return '<span class="tt-note-chip">' + esc(name) + deg + '</span>';
     }).join('');
     return '<span class="tt-notes-label">構成音</span>' + chips;
   }
@@ -507,16 +530,15 @@
   // The sheet's detail area: two columns (scale / chord). Each shows a role
   // label, the selected scale/chord name, the notes with their degrees, and the
   // description.
-  function buildSheetInfo(st) {
+  function buildSheetInfo(st, model) {
     var html = '';
-    var noChord = st.noChord || !data.chords[st.chordKey];
-    if (!st.noScale && data.scales[st.scaleKey]) {
+    if (!model.noScale) {
       var s = data.scales[st.scaleKey];
       var degs = s.intervals.map(function (iv) { return theory.scaleDegreeLabel(iv); });
       html += infoColumn('スケール', st.scaleRoot + ' ' + s.name,
         infoNotes(spellNotes(st.scaleRoot, s.intervals), degs), s.description);
     }
-    if (!noChord) {
+    if (!model.noChord) {
       var c = data.chords[st.chordKey];
       var cname = (c.symbol === '' ? st.chordRoot : st.chordRoot + c.symbol) + '（' + c.name + '）';
       html += infoColumn('コード', cname,
@@ -527,17 +549,18 @@
 
   function infoNotes(names, degrees) {
     return names.map(function (n, i) {
-      var d = degrees ? '<span class="tt-info-deg">' + degrees[i] + '</span>' : '';
-      return '<span class="tt-info-note">' + n + d + '</span>';
+      var d = degrees ? '<span class="tt-info-deg">' + esc(degrees[i]) + '</span>' : '';
+      return '<span class="tt-info-note">' + esc(n) + d + '</span>';
     }).join('');
   }
 
+  // `notesHTML` is already-escaped markup from infoNotes; the rest is plain text.
   function infoColumn(head, name, notesHTML, desc) {
     return '<div class="tt-info-col">' +
-      '<div class="tt-info-head">' + head + '</div>' +
-      '<div class="tt-info-name">' + name + '</div>' +
+      '<div class="tt-info-head">' + esc(head) + '</div>' +
+      '<div class="tt-info-name">' + esc(name) + '</div>' +
       '<div class="tt-info-notes">' + notesHTML + '</div>' +
-      (desc ? '<div class="tt-info-desc">' + desc + '</div>' : '') +
+      (desc ? '<div class="tt-info-desc">' + esc(desc) + '</div>' : '') +
       '</div>';
   }
 
@@ -564,7 +587,7 @@
     }
 
     els.sheetTitle.textContent = titleFor(model);
-    els.sheetInfo.innerHTML = buildSheetInfo(state);
+    els.sheetInfo.innerHTML = buildSheetInfo(state, model);
 
     syncControls();
     renderChordReco();
