@@ -19,7 +19,16 @@
   </header>
 
   <main class="tt-main">
-    <p class="tt-intro">スケールとコードを選ぶと、各音が「今のコードに対して何度か」を指板上に表示します。</p>
+    <div class="tt-intro">
+      <ol class="tt-steps" aria-label="使い方3ステップ">
+        <li><span class="tt-step-n">1</span><span>スケールとコードを選ぶ</span></li>
+        <li><span class="tt-step-n">2</span><span>各音が「今のコードに対して何度か」を色と形で表示</span></li>
+        <li><span class="tt-step-n">3</span><span>音で確認して、共有・印刷</span></li>
+      </ol>
+      <div class="tt-presets" id="presets" aria-label="例を試す">
+        <span class="tt-presets-label">例を試す</span>
+      </div>
+    </div>
     <section class="tt-controls" aria-label="設定">
       <section class="tt-group">
         <div class="tt-group-head">
@@ -163,12 +172,13 @@
       <h2 class="tt-sheet-title" id="sheetTitle"></h2>
       <div class="tt-board" id="board"></div>
 
+      <p class="tt-legend-guide">四角＝ルート、リング付き＝コードの要(3rd/7th)、青＝コードの音、薄色＝スケールの音。</p>
       <div class="tt-legend" aria-label="凡例">
-        <span class="tt-legend-item"><span class="tt-swatch tt-swatch--root"></span>ルート (1)</span>
-        <span class="tt-legend-item"><span class="tt-swatch tt-swatch--guide"></span>ガイドトーン (3rd / 7th)</span>
-        <span class="tt-legend-item"><span class="tt-swatch tt-swatch--chordtone"></span>コードトーン</span>
-        <span class="tt-legend-item"><span class="tt-swatch tt-swatch--scale"></span>スケール音 / テンション</span>
-        <span class="tt-legend-item"><span class="tt-swatch tt-swatch--out"></span>コードトーン（スケール外）</span>
+        <span class="tt-legend-item" title="スケール／コードの基準音。すべての度数はここを 1 として数える"><span class="tt-swatch tt-swatch--root"></span>ルート (1)</span>
+        <span class="tt-legend-item" title="コードの 3rd と 7th。コードの明暗・機能を決める最重要音"><span class="tt-swatch tt-swatch--guide"></span>ガイドトーン (3rd / 7th)</span>
+        <span class="tt-legend-item" title="今のコードの構成音"><span class="tt-swatch tt-swatch--chordtone"></span>コードトーン</span>
+        <span class="tt-legend-item" title="コードには含まれないがスケール上にある音（テンション＝緊張色）"><span class="tt-swatch tt-swatch--scale"></span>スケール音 / テンション</span>
+        <span class="tt-legend-item" title="コードの構成音だがスケールに無い＝スケールとコードが噛み合っていない音"><span class="tt-swatch tt-swatch--out"></span>コードトーン（スケール外）</span>
       </div>
 
       <div class="tt-sheet-info" id="sheetInfo"></div>
@@ -186,6 +196,7 @@
   <script src="assets/sound/0040_epiano.js"></script>
   <script src="assets/sound/0160_organ.js"></script>
   <script src="js/audio.js"></script>
+  <script src="js/presets.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

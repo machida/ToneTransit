@@ -151,7 +151,7 @@
       'chordRoot', 'chordRootField', 'chord', 'chordTypeField', 'chordToggle', 'chordReco', 'chordNotes', 'chordDesc',
       'fretStart', 'fretEnd',
       'auditionCard', 'auTimbreScale', 'auTimbreChord', 'auPlayScale', 'auPlayChord', 'auPlayMix',
-      'board', 'sheetTitle', 'sheetInfo', 'dataError'
+      'presets', 'board', 'sheetTitle', 'summary', 'sheetInfo', 'dataError'
     ].forEach(function (id) { els[id] = document.getElementById(id); });
   }
 
@@ -574,6 +574,43 @@
     return model.scaleRoot + ' ' + model.scaleName + '  ×  ' + model.chordName;
   }
 
+  // ---- Presets ("例を試す") ---------------------------------------------
+
+  var presetButtons = [];
+
+  function renderPresets() {
+    if (!els.presets) return;
+    (TT.presets || []).forEach(function (p) {
+      // Skip a preset whose data isn't present, so we never show a dead chip.
+      if (!data.scales[p.patch.scaleKey] || !data.chords[p.patch.chordKey]) return;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tt-preset-chip';
+      btn.textContent = p.label;
+      btn.title = p.caption;
+      btn._patch = p.patch;
+      btn.addEventListener('click', function () {
+        Object.keys(p.patch).forEach(function (k) {
+          if (k in state) state[k] = p.patch[k];
+        });
+        if (combo.open) closeScaleList(false);
+        normalizeState();
+        update();
+      });
+      els.presets.appendChild(btn);
+      presetButtons.push(btn);
+    });
+  }
+
+  // Highlights the chip whose patch exactly matches the current selection.
+  function updatePresetsActive() {
+    presetButtons.forEach(function (btn) {
+      var p = btn._patch;
+      var on = Object.keys(p).every(function (k) { return state[k] === p[k]; });
+      btn.classList.toggle('is-active', on);
+    });
+  }
+
   function update() {
     var model = fretboard.buildModel(state, data);
 
@@ -589,10 +626,12 @@
 
     els.sheetTitle.textContent = titleFor(model);
     els.sheetInfo.innerHTML = buildSheetInfo(state, model);
+    global.document.title = titleFor(model) + ' — ToneTransit';
 
     syncControls();
     renderChordReco();
     renderNoteLists();
+    updatePresetsActive();
     persist();
   }
 
@@ -715,6 +754,7 @@
       normalizeState();
       populateSelects();
       bindControls();
+      renderPresets();
       update();
     }).catch(function (err) {
       els.dataError.hidden = false;

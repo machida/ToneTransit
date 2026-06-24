@@ -108,6 +108,61 @@ h1, h2, h3 { margin: 0; font-weight: 800; letter-spacing: -0.02em; line-height: 
 }
 .tt-intro { margin: 0 0 16px; color: var(--text-dim); font-size: 14px; line-height: 1.5; }
 
+/* Hero: 3-step "what is this" (SPEC-02) */
+.tt-steps {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  color: var(--text);
+  font-size: 14px;
+}
+.tt-steps li { display: inline-flex; align-items: center; gap: 8px; }
+.tt-step-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  flex: none;
+}
+
+/* Quick-start presets (SPEC-01) */
+.tt-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.tt-presets-label { font-size: 13px; font-weight: 700; color: var(--text-dim); margin-right: 2px; }
+.tt-preset-chip {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 13px;
+  border: 1px solid var(--accent-soft);
+  border-radius: 999px;
+  background: var(--bg-elev2);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.tt-preset-chip:hover { border-color: var(--accent); background: var(--bg-elev); }
+.tt-preset-chip:focus-visible { outline: 2px solid var(--accent-soft); outline-offset: 2px; }
+.tt-preset-chip.is-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: var(--accent-glow);
+}
+
 /* ============================================================ 3. Control cards */
 .tt-controls {
   display: grid;
@@ -488,15 +543,21 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 .tt-out .tt-label { fill: var(--note-out-fg); }
 .tt-ring--out { fill: none; stroke: var(--note-stroke); stroke-width: 1.4; stroke-dasharray: 3 2.4; }
 
+.tt-legend-guide {
+  margin: 18px 0 0;
+  font-size: 13px;
+  color: var(--paper-dim);
+  line-height: 1.5;
+}
 .tt-legend {
   display: flex;
   flex-wrap: wrap;
   gap: 12px 30px;
-  margin-top: 22px;
+  margin-top: 10px;
   font-size: 13px;
   color: var(--paper-dim);
 }
-.tt-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.tt-legend-item { display: inline-flex; align-items: center; gap: 6px; cursor: help; }
 .tt-swatch {
   display: inline-block;
   width: 16px;
