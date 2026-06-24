@@ -190,6 +190,27 @@ test('guide tones stay flagged for highlighting (3rd & 7th over G7)', () => {
   assert.ok(!guides.includes('G')); // root is not a guide tone
 });
 
+// ---- buildModel: display level (SPEC-08) ----
+
+test('beginner level hides non-chord scale tones (tensions) when a chord is set', () => {
+  const m = fretboard.buildModel(makeState({ level: 'beginner', chordRoot: 'G', chordKey: '7' }), data);
+  const map = visibleMap(m);
+  ['G', 'B', 'D', 'F'].forEach((n) => assert.ok(n in map, n + ' chord tone stays visible'));
+  ['A', 'C', 'E'].forEach((n) => assert.ok(!(n in map), n + ' tension hidden in beginner'));
+  assert.equal(m.level, 'beginner');
+});
+
+test('beginner level still shows the whole scale when no chord is selected', () => {
+  const m = fretboard.buildModel(makeState({ level: 'beginner', noChord: true }), data);
+  assert.deepEqual(visibleMap(m), { C: '1', D: '2', E: '3', F: '4', G: '5', A: '6', B: '7' });
+});
+
+test('advanced (default) keeps tensions visible', () => {
+  const m = fretboard.buildModel(makeState({ chordRoot: 'G', chordKey: '7' }), data);
+  assert.equal(m.level, 'advanced');
+  ['A', 'C', 'E'].forEach((n) => assert.ok(n in visibleMap(m), n + ' tension visible'));
+});
+
 // ---- helper ----
 
 function pick(parsed) {

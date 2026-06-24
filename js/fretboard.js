@@ -78,6 +78,9 @@
     // treated as "no scale" so we never dereference an undefined scale.
     var noScale = !!state.noScale || !scale;
     var noChord = !!state.noChord || !data.chords[state.chordKey];
+    // Display level: 'beginner' hides non-chord scale tones (tensions) when a
+    // chord is selected, to focus on the chord. Anything else = full ('advanced').
+    var level = state.level === 'beginner' ? 'beginner' : 'advanced';
     var chord = noChord ? null : data.chords[state.chordKey];
     // Note spelling follows the scale root normally; with no scale there is no
     // key, so it follows the chord root instead.
@@ -132,7 +135,7 @@
           isScaleRoot: isScaleRoot,
           isGuide: isGuide,
           outOfScale: outOfScale,
-          visible: noteVisible(inScale, isChordTone, noScale)
+          visible: noteVisible(inScale, isChordTone, noScale, noChord, level)
         });
       }
       return { label: str.label, cells: cells };
@@ -151,14 +154,17 @@
       chordRoot: noChord ? '' : state.chordRoot,
       chordFullName: noChord ? 'スケールのみ' : chord.name,
       displayMode: state.displayMode,
+      level: level,
       preferFlats: preferFlats
     };
   }
 
-  // No scale → only chord tones; otherwise scale notes plus chord tones.
-  // (Guide tones are always highlighted visually, not filtered.)
-  function noteVisible(inScale, isChordTone, noScale) {
+  // No scale → only chord tones. Beginner + chord → chord tones only (hide the
+  // non-chord scale tones / tensions to reduce load). Otherwise scale notes plus
+  // chord tones. (Guide tones are always highlighted visually, not filtered.)
+  function noteVisible(inScale, isChordTone, noScale, noChord, level) {
     if (noScale) return isChordTone;
+    if (level === 'beginner' && !noChord) return isChordTone;
     return inScale || isChordTone;
   }
 

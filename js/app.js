@@ -28,6 +28,7 @@
     fretStart: 0,
     fretEnd: 12,
     displayMode: 'name-degree', // label style: name | degree | name-degree
+    level: 'advanced',          // detail level: beginner | advanced
     palette: 'color',           // preview palette: color | mono
     timbreScale: 'piano',       // audition timbres: piano | epiano | organ | simple
     timbreChord: 'piano',
@@ -47,6 +48,7 @@
     if (p.get('from')) state.fretStart = parseInt(p.get('from'), 10) || 0;
     if (p.get('to')) state.fretEnd = parseInt(p.get('to'), 10) || 12;
     if (p.get('mode')) state.displayMode = p.get('mode');
+    if (p.get('lvl')) state.level = p.get('lvl');
     if (p.get('pal')) state.palette = p.get('pal');
     if (p.get('tone')) { state.timbreScale = state.timbreChord = p.get('tone'); } // legacy single
     if (p.get('toneS')) state.timbreScale = p.get('toneS');
@@ -64,6 +66,7 @@
     if (['name', 'degree', 'name-degree'].indexOf(state.displayMode) < 0) {
       state.displayMode = 'name-degree';
     }
+    if (['beginner', 'advanced'].indexOf(state.level) < 0) state.level = 'advanced';
     if (['color', 'mono'].indexOf(state.palette) < 0) state.palette = 'color';
     var timbres = ['piano', 'epiano', 'organ', 'simple'];
     if (timbres.indexOf(state.timbreScale) < 0) state.timbreScale = 'piano';
@@ -114,6 +117,7 @@
     p.set('from', state.fretStart);
     p.set('to', state.fretEnd);
     p.set('mode', state.displayMode);
+    if (state.level !== 'advanced') p.set('lvl', state.level);
     if (state.palette === 'mono') p.set('pal', 'mono');
     if (state.timbreScale !== 'piano') p.set('toneS', state.timbreScale);
     if (state.timbreChord !== 'piano') p.set('toneC', state.timbreChord);
@@ -407,6 +411,7 @@
     els.fretStart.value = state.fretStart;
     els.fretEnd.value = state.fretEnd;
     setRadio('displayMode', state.displayMode);
+    setRadio('level', state.level);
     setRadio('palette', state.palette);
     document.body.classList.toggle('tt-mono', state.palette === 'mono');
     // Switches are ON when the scale / chord is shown (i.e. NOT the "なし" flag).
@@ -749,6 +754,7 @@
       state.fretEnd = clampFret(this.value); update();
     });
     bindRadio('displayMode', function (v) { state.displayMode = v; update(); });
+    bindRadio('level', function (v) { state.level = v; update(); });
     bindRadio('palette', function (v) { state.palette = v; update(); });
 
     document.getElementById('printBtn').addEventListener('click', function () {

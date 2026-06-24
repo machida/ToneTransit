@@ -59,7 +59,7 @@
     var svg = el('svg', {
       xmlns: SVG_NS,
       viewBox: '0 0 ' + width + ' ' + height,
-      class: 'tt-fretboard',
+      class: 'tt-fretboard tt-level-' + (model.level || 'advanced'),
       role: 'img',
       'aria-label': label
     });
