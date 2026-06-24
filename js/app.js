@@ -761,6 +761,8 @@
       global.print();
     });
     document.getElementById('shareBtn').addEventListener('click', copyShareLink);
+    var imgBtn = document.getElementById('imgBtn');
+    if (imgBtn) imgBtn.addEventListener('click', exportPng);
 
     // Quiz (SPEC-09): start / next / quit, and tap-to-answer on the board.
     if (els.quizBtn) els.quizBtn.addEventListener('click', startQuiz);
@@ -810,6 +812,77 @@
     var n = parseInt(v, 10);
     if (isNaN(n)) n = 0;
     return Math.max(0, Math.min(24, n));
+  }
+
+  // ---- Image export (SPEC-13) -------------------------------------------
+
+  // Copies the computed presentation styles from the live SVG onto a clone, so
+  // the exported image looks identical without the external stylesheet.
+  var SVG_STYLE_PROPS = [
+    'fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-dasharray',
+    'opacity', 'font-family', 'font-size', 'font-weight', 'text-anchor'
+  ];
+  function inlineStyles(src, dst) {
+    var from = [src].concat(Array.prototype.slice.call(src.querySelectorAll('*')));
+    var to = [dst].concat(Array.prototype.slice.call(dst.querySelectorAll('*')));
+    for (var i = 0; i < from.length; i++) {
+      var cs = global.getComputedStyle(from[i]);
+      var decl = '';
+      SVG_STYLE_PROPS.forEach(function (p) {
+        var v = cs.getPropertyValue(p);
+        if (v) decl += p + ':' + v + ';';
+      });
+      if (decl) to[i].setAttribute('style', decl);
+    }
+  }
+
+  function exportImageName() {
+    return (titleFor(fretboard.buildModel(state, data)) || 'fretboard')
+      .replace(/\s+/g, '_').replace(/[\\/:*?"<>|（）]/g, '');
+  }
+
+  function downloadBlob(blob, name) {
+    var url = global.URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    global.setTimeout(function () { global.URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function exportPng() {
+    var svg = els.board.querySelector('svg');
+    if (!svg) { flash('画像にできる図がありません'); return; }
+    var clone = svg.cloneNode(true);
+    inlineStyles(svg, clone);
+    var vb = svg.viewBox && svg.viewBox.baseVal;
+    var w = (vb && vb.width) || svg.clientWidth || 800;
+    var h = (vb && vb.height) || svg.clientHeight || 300;
+    var xml = new global.XMLSerializer().serializeToString(clone);
+    var src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+    var img = new global.Image();
+    img.onload = function () {
+      var scale = 2; // crisp on hi-dpi
+      var canvas = document.createElement('canvas');
+      canvas.width = Math.round(w * scale);
+      canvas.height = Math.round(h * scale);
+      var c = canvas.getContext('2d');
+      c.fillStyle = '#ffffff';
+      c.fillRect(0, 0, canvas.width, canvas.height);
+      c.drawImage(img, 0, 0, canvas.width, canvas.height);
+      if (canvas.toBlob) {
+        canvas.toBlob(function (blob) {
+          if (blob) { downloadBlob(blob, exportImageName() + '.png'); flash('画像を保存しました'); }
+          else flash('画像の生成に失敗しました');
+        }, 'image/png');
+      } else {
+        flash('このブラウザは画像保存に未対応です');
+      }
+    };
+    img.onerror = function () { flash('画像の生成に失敗しました'); };
+    img.src = src;
   }
 
   function copyShareLink() {
