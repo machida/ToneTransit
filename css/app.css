@@ -599,7 +599,7 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 /* Guide tones: same fill as chord tones, distinguished by the outer ring. */
 .tt-guide .tt-shape { fill: var(--note-guide); stroke: var(--note-chord-stroke); }
 .tt-guide .tt-label { fill: var(--note-guide-fg); }
-.tt-ring-fill { fill: var(--paper); stroke: none; }
+.tt-ring-fill { fill: none; stroke: var(--paper); stroke-width: 4.8; }
 .tt-guide .tt-ring { fill: none; stroke: var(--note-stroke); stroke-width: 1.6; }
 
 /* Chord tone outside the current scale: distinct fill + dashed ring. */
