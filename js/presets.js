@@ -26,7 +26,7 @@
       patch: { scaleRoot: 'A', scaleKey: 'pentatonic_minor', chordRoot: 'A', chordKey: '7', noScale: false, noChord: false }
     },
     {
-      label: 'モーダル（ドリアン）',
+      label: 'ドリアン',
       caption: 'Dm7 上の D ドリアン（♮6 の浮遊感）',
       patch: { scaleRoot: 'D', scaleKey: 'dorian', chordRoot: 'D', chordKey: 'm7', noScale: false, noChord: false }
     },

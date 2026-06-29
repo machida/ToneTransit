@@ -815,6 +815,12 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
   font-size: 14px;
   line-height: 1.7;
 }
+.tt-help-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .tt-toast { transition: none; }
