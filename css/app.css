@@ -599,6 +599,7 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 /* Guide tones: same fill as chord tones, distinguished by the outer ring. */
 .tt-guide .tt-shape { fill: var(--note-guide); stroke: var(--note-chord-stroke); }
 .tt-guide .tt-label { fill: var(--note-guide-fg); }
+.tt-ring-fill { fill: var(--paper); stroke: none; }
 .tt-guide .tt-ring { fill: none; stroke: var(--note-stroke); stroke-width: 1.6; }
 
 /* Chord tone outside the current scale: distinct fill + dashed ring. */
@@ -684,7 +685,7 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 .tt-mono {
   --note-stroke: #000;
   --note-root: #000;     --note-root-fg: #fff;  --note-root-stroke: #000;  /* darkest: root */
-  --note-guide: #000;    --note-guide-fg: #fff; /* black + ring: guide 3rd/7th */
+  --note-guide: var(--note-chord); --note-guide-fg: var(--note-chord-fg); /* chord grey + ring: guide 3rd/7th */
   --note-chord: #595959; --note-chord-fg: #fff; --note-chord-stroke: #000; /* mid grey: chord tone */
   --note-scale: #dcdcdc; --note-scale-fg: #000; --note-scale-stroke: #000; /* light grey: scale note */
   --note-out: #ffffff;   --note-out-fg: #000;   --note-out-stroke: #000;   /* white + dashed: outside scale */

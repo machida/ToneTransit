@@ -174,10 +174,12 @@
     // 3rd / 7th), so the dashed ring sits one step further out and neither is
     // hidden.
     if (cell.isGuide && !cell.outOfScale) {
+      g.appendChild(el('circle', { cx: cx, cy: cy, r: L.radius + 4, class: 'tt-ring-fill' }));
       g.appendChild(el('circle', { cx: cx, cy: cy, r: L.radius + 4, class: 'tt-ring' }));
     }
     if (cell.outOfScale) {
       var outR = L.radius + 4;
+      g.appendChild(el('circle', { cx: cx, cy: cy, r: outR, class: 'tt-ring-fill' }));
       g.appendChild(el('circle', { cx: cx, cy: cy, r: outR, class: 'tt-ring tt-ring--out' }));
     }
 
