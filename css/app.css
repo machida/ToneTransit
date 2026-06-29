@@ -47,10 +47,10 @@
      colour used for the rings (guide / out-of-scale), kept independent. */
   --note-stroke: #1f2733;
   --note-root: #111827;   --note-root-fg: #ffffff;  --note-root-stroke: #000000; /* root (1) */
-  --note-chord: #2563eb;  --note-chord-fg: #ffffff; --note-chord-stroke: #1e40af; /* chord tone (blue) */
+  --note-chord: #c46a1a;  --note-chord-fg: #ffffff; --note-chord-stroke: #8a4710; /* chord tone (amber) */
   --note-guide: var(--note-chord); --note-guide-fg: var(--note-chord-fg); /* guide = chord colour; ring marks it */
-  --note-scale: #e7ebf1;  --note-scale-fg: #1f2733; --note-scale-stroke: #9aa6b6; /* scale note (light) */
-  --note-out: #a9c4ef;    --note-out-fg: #1f2733;   --note-out-stroke: #5e82c0;  /* chord tone outside scale (light blue) */
+  --note-scale: #f5ead7;  --note-scale-fg: #4b3420; --note-scale-stroke: #c8b08e; /* scale note (light sand) */
+  --note-out: #e7b27f;    --note-out-fg: #4a2f18;   --note-out-stroke: #b56b2d;  /* chord tone outside scale (warm orange) */
 
   color-scheme: dark;
 }
