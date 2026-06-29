@@ -59,7 +59,7 @@
     var svg = el('svg', {
       xmlns: SVG_NS,
       viewBox: '0 0 ' + width + ' ' + height,
-      class: 'tt-fretboard tt-level-' + (model.level || 'advanced'),
+      class: 'tt-fretboard',
       role: 'img',
       'aria-label': label
     });
@@ -173,11 +173,11 @@
     // outside the scale gets a dashed ring. A note can be BOTH (an out-of-scale
     // 3rd / 7th), so the dashed ring sits one step further out and neither is
     // hidden.
-    if (cell.isGuide) {
+    if (cell.isGuide && !cell.outOfScale) {
       g.appendChild(el('circle', { cx: cx, cy: cy, r: L.radius + 4, class: 'tt-ring' }));
     }
     if (cell.outOfScale) {
-      var outR = cell.isGuide ? L.radius + 7 : L.radius + 4;
+      var outR = L.radius + 4;
       g.appendChild(el('circle', { cx: cx, cy: cy, r: outR, class: 'tt-ring tt-ring--out' }));
     }
 

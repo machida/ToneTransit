@@ -28,7 +28,6 @@
     fretStart: 0,
     fretEnd: 12,
     displayMode: 'name-degree', // label style: name | degree | name-degree
-    level: 'advanced',          // detail level: beginner | advanced
     theme: 'auto',              // UI theme: auto | light | dark
     lang: 'ja',                 // UI language: ja | en (default from browser)
     palette: 'color',           // preview palette: color | mono
@@ -50,7 +49,6 @@
     if (p.get('from')) state.fretStart = parseInt(p.get('from'), 10) || 0;
     if (p.get('to')) state.fretEnd = parseInt(p.get('to'), 10) || 12;
     if (p.get('mode')) state.displayMode = p.get('mode');
-    if (p.get('lvl')) state.level = p.get('lvl');
     if (p.get('th')) state.theme = p.get('th');
     if (p.get('lang')) state.lang = p.get('lang');
     if (p.get('pal')) state.palette = p.get('pal');
@@ -70,7 +68,6 @@
     if (['name', 'degree', 'name-degree'].indexOf(state.displayMode) < 0) {
       state.displayMode = 'name-degree';
     }
-    if (['beginner', 'advanced'].indexOf(state.level) < 0) state.level = 'advanced';
     if (['auto', 'light', 'dark'].indexOf(state.theme) < 0) state.theme = 'auto';
     if (['ja', 'en'].indexOf(state.lang) < 0) state.lang = 'ja';
     if (['color', 'mono'].indexOf(state.palette) < 0) state.palette = 'color';
@@ -123,7 +120,6 @@
     p.set('from', state.fretStart);
     p.set('to', state.fretEnd);
     p.set('mode', state.displayMode);
-    if (state.level !== 'advanced') p.set('lvl', state.level);
     if (state.theme !== 'auto') p.set('th', state.theme);
     if (state.lang !== 'ja') p.set('lang', state.lang);
     if (state.palette === 'mono') p.set('pal', 'mono');
@@ -163,8 +159,7 @@
       'chordRoot', 'chordRootField', 'chord', 'chordTypeField', 'chordToggle', 'chordReco', 'chordNotes', 'chordDesc',
       'fretStart', 'fretEnd',
       'auditionCard', 'auTimbreScale', 'auTimbreChord', 'auPlayScale', 'auPlayChord', 'auPlayMix',
-      'presets', 'board', 'sheetTitle', 'summary', 'sheetInfo', 'dataError',
-      'quiz', 'quizQ', 'quizFeedback', 'quizNext', 'quizClose', 'quizBtn'
+      'board', 'sheetTitle', 'summary', 'sheetInfo', 'dataError'
     ].forEach(function (id) { els[id] = document.getElementById(id); });
   }
 
@@ -419,7 +414,6 @@
     els.fretStart.value = state.fretStart;
     els.fretEnd.value = state.fretEnd;
     setRadio('displayMode', state.displayMode);
-    setRadio('level', state.level);
     setRadio('theme', state.theme);
     setRadio('lang', state.lang);
     setRadio('palette', state.palette);
@@ -639,46 +633,23 @@
 
   // ---- Presets ("例を試す") ---------------------------------------------
 
-  var presetButtons = [];
-
-  function renderPresets() {
-    if (!els.presets) return;
-    (TT.presets || []).forEach(function (p) {
-      // Skip a preset whose data isn't present, so we never show a dead chip.
-      if (!data.scales[p.patch.scaleKey] || !data.chords[p.patch.chordKey]) return;
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'tt-preset-chip';
-      btn.textContent = p.label;
-      btn.title = p.caption;
-      btn._patch = p.patch;
-      btn.addEventListener('click', function () {
-        Object.keys(p.patch).forEach(function (k) {
-          if (k in state) state[k] = p.patch[k];
-        });
-        if (combo.open) closeScaleList(false);
-        normalizeState();
-        update();
-      });
-      els.presets.appendChild(btn);
-      presetButtons.push(btn);
+  function applyPreset(patch) {
+    Object.keys(patch).forEach(function (k) {
+      if (k in state) state[k] = patch[k];
     });
+    if (combo.open) closeScaleList(false);
+    normalizeState();
+    update();
   }
 
-  // Highlights the chip whose patch exactly matches the current selection.
-  function updatePresetsActive() {
-    presetButtons.forEach(function (btn) {
-      var p = btn._patch;
-      var on = Object.keys(p).every(function (k) { return state[k] === p[k]; });
-      btn.classList.toggle('is-active', on);
+  function availablePresets() {
+    return (TT.presets || []).filter(function (p) {
+      return data.scales[p.patch.scaleKey] && data.chords[p.patch.chordKey];
     });
   }
 
   function update() {
     var model = fretboard.buildModel(state, data);
-
-    // Any change to the board invalidates an in-progress quiz question.
-    if (quiz.active) endQuiz();
 
     els.board.innerHTML = '';
     if (model.noScale && model.noChord) {
@@ -691,15 +662,34 @@
     }
 
     els.sheetTitle.textContent = titleFor(model);
-    if (els.summary && TT.summary) els.summary.textContent = TT.summary(model, state.lang);
+    if (els.summary && TT.summary) renderSummary(TT.summary(model, state.lang));
     els.sheetInfo.innerHTML = buildSheetInfo(state, model);
     global.document.title = titleFor(model) + ' — ToneTransit';
 
     syncControls();
     renderChordReco();
     renderNoteLists();
-    updatePresetsActive();
     persist();
+  }
+
+  function renderSummary(data) {
+    if (!els.summary) return;
+    els.summary.innerHTML = '';
+    if (!data) return;
+    var intro = document.createElement('div');
+    intro.className = 'tt-summary-intro';
+    intro.textContent = data.intro || '';
+    els.summary.appendChild(intro);
+    if (data.bullets && data.bullets.length) {
+      var list = document.createElement('ul');
+      list.className = 'tt-summary-list';
+      data.bullets.forEach(function (line) {
+        var li = document.createElement('li');
+        li.textContent = line;
+        list.appendChild(li);
+      });
+      els.summary.appendChild(list);
+    }
   }
 
   // ---- Playback highlighting (SPEC-06) -----------------------------------
@@ -725,61 +715,6 @@
     var on = global.setTimeout(function () { setPcPlaying(ev.pitchClass, true); }, ev.delay * 1000);
     var off = global.setTimeout(function () { setPcPlaying(ev.pitchClass, false); }, (ev.delay + ev.dur) * 1000);
     playTimers.push(on, off);
-  }
-
-  // ---- Quiz (SPEC-09) ----------------------------------------------------
-
-  var quiz = { active: false, answer: null };
-
-  function clearQuizMarks() {
-    if (!els.board) return;
-    var marked = els.board.querySelectorAll('.tt-note.is-correct, .tt-note.is-wrong');
-    Array.prototype.forEach.call(marked, function (n) {
-      n.classList.remove('is-correct', 'is-wrong');
-    });
-  }
-
-  function startQuiz() {
-    if (!TT.quiz) return;
-    var q = TT.quiz.quizFor(fretboard.buildModel(state, data), null, state.lang);
-    if (!q) { flash(t('quiz.none')); return; }
-    quiz.active = true;
-    quiz.answer = q.correctPitchClasses;
-    clearQuizMarks();
-    clearPlayHighlights();
-    els.quiz.hidden = false;
-    els.quizQ.textContent = q.prompt + t('quiz.tapHint');
-    els.quizFeedback.textContent = '';
-    els.quizFeedback.className = 'tt-quiz-feedback';
-  }
-
-  function endQuiz() {
-    quiz.active = false;
-    quiz.answer = null;
-    clearQuizMarks();
-    if (els.quiz) els.quiz.hidden = true;
-  }
-
-  function markPc(pc, cls) {
-    var nodes = els.board.querySelectorAll('[data-pc="' + pc + '"]');
-    Array.prototype.forEach.call(nodes, function (n) { n.classList.add(cls); });
-  }
-
-  function onBoardClick(e) {
-    if (!quiz.active) return;
-    var g = e.target.closest ? e.target.closest('[data-pc]') : null;
-    if (!g) return;
-    var pc = parseInt(g.getAttribute('data-pc'), 10);
-    if (quiz.answer.indexOf(pc) >= 0) {
-      quiz.answer.forEach(function (p) { markPc(p, 'is-correct'); });
-      els.quizFeedback.textContent = t('quiz.correct');
-      els.quizFeedback.className = 'tt-quiz-feedback is-ok';
-      quiz.active = false; // answered; 次の問題 で再開
-    } else {
-      markPc(pc, 'is-wrong');
-      els.quizFeedback.textContent = t('quiz.wrong');
-      els.quizFeedback.className = 'tt-quiz-feedback is-ng';
-    }
   }
 
   // ---- Wiring ------------------------------------------------------------
@@ -811,7 +746,6 @@
       state.fretEnd = clampFret(this.value); update();
     });
     bindRadio('displayMode', function (v) { state.displayMode = v; update(); });
-    bindRadio('level', function (v) { state.level = v; update(); });
     bindRadio('theme', function (v) { state.theme = v; applyTheme(); persist(); });
     bindRadio('lang', function (v) { state.lang = v; applyI18n(); update(); });
     bindRadio('palette', function (v) { state.palette = v; update(); });
@@ -823,20 +757,7 @@
     var imgBtn = document.getElementById('imgBtn');
     if (imgBtn) imgBtn.addEventListener('click', exportPng);
     var tourBtn = document.getElementById('tourBtn');
-    if (tourBtn) tourBtn.addEventListener('click', startTour);
-
-    // Open the glossary when the legend's "用語の意味" link is followed.
-    var glossaryEl = document.getElementById('glossary');
-    var glossaryLink = document.querySelector('.tt-glossary-link');
-    if (glossaryEl && glossaryLink) {
-      glossaryLink.addEventListener('click', function () { glossaryEl.open = true; });
-    }
-
-    // Quiz (SPEC-09): start / next / quit, and tap-to-answer on the board.
-    if (els.quizBtn) els.quizBtn.addEventListener('click', startQuiz);
-    if (els.quizNext) els.quizNext.addEventListener('click', startQuiz);
-    if (els.quizClose) els.quizClose.addEventListener('click', endQuiz);
-    if (els.board) els.board.addEventListener('click', onBoardClick);
+    if (tourBtn) tourBtn.addEventListener('click', openHelpModal);
 
     // Audio audition (Web Audio); hide the whole 試聴 card where unsupported.
     audioOn = !!(TT.audio && TT.audio.supported());
@@ -986,21 +907,10 @@
 
   // The short first-run nudge…
   var COACH_STEPS = [
-    { sel: '#presets', text: 'まずはここから。例をクリックすると、意味のある盤面がすぐ開きます。' },
+    { sel: '#tourBtn', text: '「？ 使い方」を開くと、使い方の説明と例のプリセットを見られます。' },
     { sel: '#chord', text: 'コードを変えると、各音の「度数（今のコードに対する意味）」が切り替わります。' },
     { sel: '#auPlayScale', text: '▶ で音を鳴らして、耳でも確かめられます。' },
     { sel: '#shareBtn', text: '今の状態はリンクで共有・印刷できます。' }
-  ];
-
-  // …and the fuller on-demand tour (SPEC-12) launched from the 使い方 button.
-  var TOUR_STEPS = [
-    { sel: '#presets', text: '① まずは例から。クリックすると意味のある盤面が開きます。' },
-    { sel: '#scaleSearch', text: '② スケールは検索して選べます（例: ドリアン / lydian / かな）。' },
-    { sel: '#chord', text: '③ コードを選ぶと、各音の度数（今のコードに対する意味）が変わります。' },
-    { sel: '#summary', text: '④ 図の意味は、ここに日本語で要約されます。' },
-    { sel: '#auPlayScale', text: '⑤ ▶ で音を鳴らすと、鳴っている音が盤上で光ります。' },
-    { sel: '#quizBtn', text: '⑥ クイズで理解度を確認できます。' },
-    { sel: '#shareBtn', text: '⑦ 今の状態はリンク共有・印刷・画像保存できます。' }
   ];
 
   // Runs a sequence of pointer tips. Used for both the first-run coach and the
@@ -1081,7 +991,139 @@
   function maybeStartCoach() {
     if (shouldShowCoach()) runTour(COACH_STEPS);
   }
-  function startTour() { runTour(TOUR_STEPS); }
+
+  function helpContent() {
+    if (state.lang === 'en') {
+      return {
+        title: 'How To Use ToneTransit',
+        sections: [
+        {
+          heading: '1. Start with an example',
+          body: 'If you want a meaningful board immediately, use one of the example presets below. They load practical combinations such as dominant resolution or modal harmony.'
+        },
+          {
+            heading: '2. Pick a scale and a chord',
+            body: 'Choose a scale on the left and a chord on the right. The board shows what each scale note means against the current chord, not just inside the scale itself.'
+          },
+          {
+            heading: '3. Read the colours and shapes',
+            body: 'Square = root. Ringed notes = guide tones (3rd / 7th). Blue notes are chord tones. Pale notes are scale notes and tensions. Dashed outer rings mark chord tones that fall outside the current scale.'
+          },
+          {
+            heading: '4. Read the summary and listen',
+            body: 'The summary above the preview explains the current relationship in plain language. In the audition card, you can play the scale, the chord, or both together, and the sounding notes light up on the board.'
+          },
+          {
+            heading: '5. Adjust the preview and share it',
+            body: 'Use the controls above the preview to change note labels, fret range, and colour mode. You can also copy a link, save an image, or print the current board.'
+          }
+        ],
+        close: 'Close'
+      };
+    }
+    return {
+      title: '使い方',
+      sections: [
+        {
+          heading: '1. まずは例から試す',
+          body: '下のプリセットを押すと、ドミナント解決やモーダルなど、意味のある組み合わせをすぐ開けます。最初の一手に向いています。'
+        },
+        {
+          heading: '2. スケールとコードを選ぶ',
+          body: '左でスケール、右でコードを選びます。このツールは「スケールの中で何番目か」ではなく、「今のコードに対してどんな意味か」を指板上に出します。'
+        },
+        {
+          heading: '3. 色と形を読む',
+          body: '四角はルート、リング付きはガイドトーン（3rd / 7th）です。青はコードトーン、薄色はスケール音やテンション、破線の外リングはスケール外のコードトーンを示します。'
+        },
+        {
+          heading: '4. 要約文と試聴で確認する',
+          body: 'プレビュー上の要約文には、今のスケールとコードの関係が文章で出ます。試聴ではスケール、コード、ミックスを再生でき、鳴っている音は指板上で光ります。'
+        },
+        {
+          heading: '5. プレビューを整えて共有する',
+          body: 'プレビュー上では表記、フレット範囲、配色を切り替えられます。今の状態はリンク共有、画像保存、印刷にも対応しています。'
+        }
+      ],
+      close: '閉じる'
+    };
+  }
+
+  function openHelpModal() {
+    var content = helpContent();
+    var backdrop = document.createElement('div');
+    backdrop.className = 'tt-help-backdrop';
+    var modal = document.createElement('div');
+    modal.className = 'tt-help-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', content.title);
+
+    var head = document.createElement('div');
+    head.className = 'tt-help-head';
+    var title = document.createElement('h2');
+    title.className = 'tt-help-title';
+    title.textContent = content.title;
+    var closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'tt-help-close';
+    closeBtn.textContent = content.close;
+    head.appendChild(title);
+    head.appendChild(closeBtn);
+
+    var body = document.createElement('div');
+    body.className = 'tt-help-body';
+    content.sections.forEach(function (section, index) {
+      var block = document.createElement('section');
+      block.className = 'tt-help-section';
+      var h = document.createElement('h3');
+      h.className = 'tt-help-section-title';
+      h.textContent = section.heading;
+      var p = document.createElement('p');
+      p.className = 'tt-help-section-body';
+      p.textContent = section.body;
+      block.appendChild(h);
+      block.appendChild(p);
+      if (index === 0) {
+        var presets = availablePresets();
+        if (presets.length) {
+          var chips = document.createElement('div');
+          chips.className = 'tt-help-presets';
+          presets.forEach(function (preset) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'tt-preset-chip';
+            btn.textContent = preset.label;
+            btn.title = preset.caption;
+            btn.addEventListener('click', function () {
+              close();
+              applyPreset(preset.patch);
+            });
+            chips.appendChild(btn);
+          });
+          block.appendChild(chips);
+        }
+      }
+      body.appendChild(block);
+    });
+
+    modal.appendChild(head);
+    modal.appendChild(body);
+    backdrop.appendChild(modal);
+    document.body.appendChild(backdrop);
+
+    function close() {
+      document.removeEventListener('keydown', onKeyDown);
+      if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+    }
+    function onKeyDown(e) {
+      if (e.key === 'Escape') close();
+    }
+    closeBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', function (e) { if (e.target === backdrop) close(); });
+    document.addEventListener('keydown', onKeyDown);
+    closeBtn.focus();
+  }
 
   // ---- Boot --------------------------------------------------------------
 
@@ -1114,7 +1156,6 @@
       applyI18n();   // translate static chrome before first paint
       populateSelects();
       bindControls();
-      renderPresets();
       update();
       maybeStartCoach();
     }).catch(function (err) {

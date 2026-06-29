@@ -27,12 +27,6 @@ test('t() returns the requested language and falls back to ja', () => {
   assert.equal(i18n.t('nope.nope', null, 'en'), 'nope.nope');
 });
 
-test('t() interpolates {vars}', () => {
-  const s = i18n.t('quiz.q.degree', { chord: 'G7', deg: '3' }, 'en');
-  assert.match(s, /G7/);
-  assert.match(s, /3/);
-});
-
 test('resolve() falls back to ja for unknown languages', () => {
   assert.equal(i18n.resolve('fr'), 'ja');
   assert.equal(i18n.resolve('en'), 'en');

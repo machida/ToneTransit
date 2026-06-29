@@ -1,11 +1,10 @@
 /*
  * summary.js
  *
- * Turns a fretboard model into a one/two-sentence plain-language description,
- * bridging the diagram and the theory ("what am I looking at?"). Pure: takes a
- * model (from fretboard.buildModel) and an optional lang ('ja' | 'en', default
- * 'ja'), returns a string. No DOM, no state. Self-contained (no i18n dep) so it
- * stays unit-testable.
+ * Turns a fretboard model into structured summary data for the preview.
+ * Pure: takes a model (from fretboard.buildModel) and an optional
+ * lang ('ja' | 'en', default 'ja'), returns { intro, bullets }.
+ * No DOM, no state. Self-contained (no i18n dep) so it stays unit-testable.
  *
  * Exposed on TT.summary (and module.exports for node tests).
  */
@@ -28,32 +27,52 @@
   }
 
   function nameDeg(c) { return c.name + '(' + c.degree + ')'; }
+  function joinJa(items, sep, lastSep) {
+    if (!items.length) return '';
+    if (items.length === 1) return items[0];
+    if (items.length === 2) return items[0] + lastSep + items[1];
+    return items.slice(0, -1).join(sep) + lastSep + items[items.length - 1];
+  }
 
   function summary(model, lang) {
     var en = lang === 'en';
     var notes = uniqueVisible(model);
 
     if (model.noScale && model.noChord) {
-      return en
-        ? 'No scale or chord selected. Pick a scale or a chord to see what each note means.'
-        : 'スケールもコードも選ばれていません。スケールかコードを選ぶと、各音の意味が表示されます。';
+      return {
+        intro: en ? 'No scale or chord selected.' : 'スケールもコードも選ばれていません。',
+        bullets: [
+          en
+            ? 'Pick a scale or a chord to see what each note means.'
+            : 'スケールかコードを選ぶと、各音の意味が表示されます。'
+        ]
+      };
     }
 
     if (model.noScale) {
       var ct = notes.map(nameDeg).join(en ? ', ' : '・');
-      return en
-        ? 'Chord tones of ' + model.chordName + ': ' + ct +
-          '. Pick a scale to see which of them lie in it.'
-        : model.chordName + ' の構成音：' + ct + '。スケールを選ぶと、各音がスケールに含まれるかが分かります。';
+      return {
+        intro: en ? 'Chord tones of ' + model.chordName : model.chordName + ' の情報',
+        bullets: [
+          (en ? 'Chord tones: ' : '構成音: ') + ct,
+          en
+            ? 'Pick a scale to see which of them lie in it.'
+            : 'スケールを選ぶと、どの音がスケールに入るかが分かります。'
+        ]
+      };
     }
 
     if (model.noChord) {
       var sc = notes.map(nameDeg).join(en ? ', ' : '・');
-      return en
-        ? model.scaleRoot + ' ' + model.scaleName + ' — notes: ' + sc +
-          '. Pick a chord to read each note as a degree against it.'
-        : model.scaleRoot + ' ' + model.scaleName + ' の構成音：' + sc +
-          '。コードを選ぶと、各音が「そのコードに対して何度か」を表示します。';
+      return {
+        intro: en ? model.scaleRoot + ' ' + model.scaleName : model.scaleRoot + ' ' + model.scaleName + ' の情報',
+        bullets: [
+          (en ? 'Notes: ' : '構成音: ') + sc,
+          en
+            ? 'Pick a chord to read each note as a degree against it.'
+            : 'コードを選ぶと、各音がそのコードに対して何度かを読めます。'
+        ]
+      };
     }
 
     // Scale over a chord — the core case.
@@ -64,22 +83,30 @@
     var outs = notes.filter(function (c) { return c.outOfScale; }).map(nameDeg);
 
     if (en) {
-      var s = model.scaleRoot + ' ' + model.scaleName + ' over ' + model.chordName + '. ';
-      if (guides.length) s += 'Guide tones: ' + guides.join(' and ') + '. ';
-      if (tensions.length) s += 'Tensions (non-chord scale notes): ' + tensions.join(', ') + '. ';
-      s += outs.length
-        ? 'Out-of-scale chord tones: ' + outs.join(', ') + ' (scale and chord clash here).'
-        : 'No out-of-scale chord tones — a good fit.';
-      return s;
+      return {
+        intro: model.scaleRoot + ' ' + model.scaleName + ' over ' + model.chordName,
+        bullets: [
+          guides.length ? 'Guide tones: ' + guides.join(' and ') : 'Guide tones: none',
+          tensions.length ? 'Tensions: ' + tensions.join(', ') : 'Tensions: none',
+          outs.length ? 'Out-of-scale chord tones: ' + outs.join(', ') : 'Out-of-scale chord tones: none'
+        ]
+      };
     }
 
-    var j = model.chordName + ' の上で ' + model.scaleRoot + ' ' + model.scaleName + '。';
-    if (guides.length) j += 'ガイドトーンは ' + (guides.length <= 2 ? guides.join(' と ') : guides.join('・')) + '。';
-    if (tensions.length) j += 'テンション（コード外のスケール音）は ' + tensions.join('・') + '。';
-    j += outs.length
-      ? 'スケール外のコードトーンは ' + outs.join('・') + '（コードとスケールが噛み合っていない音）。'
-      : 'スケール外のコードトーンはなく、よく噛み合っています。';
-    return j;
+    return {
+      intro: model.chordName + ' に対して ' + model.scaleRoot + ' ' + model.scaleName,
+      bullets: [
+        guides.length
+          ? 'ガイドトーン: ' + joinJa(guides, '・', ' と ')
+          : 'ガイドトーン: なし',
+        tensions.length
+          ? 'テンション: ' + joinJa(tensions, '・', ' と ')
+          : 'テンション: なし',
+        outs.length
+          ? 'スケール外のコードトーン: ' + joinJa(outs, '・', ' と ')
+          : 'スケール外のコードトーン: なし'
+      ]
+    };
   }
 
   TT.summary = summary;

@@ -33,6 +33,7 @@
   --radius-xs: 6px;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
   --sans: 'Avenir Next', 'Hiragino Sans', 'Noto Sans JP', 'Segoe UI', Roboto, sans-serif;
+  --note-label-font: 'Helvetica Neue', 'Arial', 'Hiragino Sans', 'Noto Sans JP', sans-serif;
 
   /* Light "paper" (diagram) — independent of the dark UI. */
   --paper: #ffffff;
@@ -65,6 +66,10 @@
   --border: #d4dae3;
   --text: #1f2733;
   --text-dim: #5b6878;
+  --accent: #6d28d9;
+  --accent-strong: #5b21b6;
+  --accent-soft: #7c3aed;
+  --accent-glow: 0 2px 10px -2px rgba(91, 33, 182, 0.28);
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 10px 24px -16px rgba(15, 23, 42, 0.3);
   color-scheme: light;
 }
@@ -114,6 +119,27 @@ h1, h2, h3 { margin: 0; font-weight: 800; letter-spacing: -0.02em; line-height: 
   gap: 14px;
 }
 .tt-brand-text { display: flex; align-items: baseline; flex-wrap: wrap; gap: 14px; }
+.tt-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.tt-header-setting,
+.tt-header-lang {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.tt-header-setting-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
 .tt-help-btn {
   font: inherit;
   font-size: 13px;
@@ -132,47 +158,18 @@ h1, h2, h3 { margin: 0; font-weight: 800; letter-spacing: -0.02em; line-height: 
 .tt-brand h1 .tt-accent { color: var(--accent-soft); }
 .tt-brand p { margin: 0; color: var(--text-dim); font-size: 14px; }
 
+@media (max-width: 760px) {
+  .tt-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
 .tt-main {
   max-width: 1320px;
   margin: 0 auto;
   padding: 22px 24px 64px;
 }
-.tt-intro { margin: 0 0 16px; color: var(--text-dim); font-size: 14px; line-height: 1.5; }
-
-/* Hero: 3-step "what is this" (SPEC-02) */
-.tt-steps {
-  list-style: none;
-  margin: 0 0 12px;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 18px;
-  color: var(--text);
-  font-size: 14px;
-}
-.tt-steps li { display: inline-flex; align-items: center; gap: 8px; }
-.tt-step-n {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 800;
-  flex: none;
-}
-
-/* Quick-start presets (SPEC-01) */
-.tt-presets {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-.tt-presets-label { font-size: 13px; font-weight: 700; color: var(--text-dim); margin-right: 2px; }
 .tt-preset-chip {
   font: inherit;
   font-size: 13px;
@@ -193,6 +190,7 @@ h1, h2, h3 { margin: 0; font-weight: 800; letter-spacing: -0.02em; line-height: 
   border-color: var(--accent);
   box-shadow: var(--accent-glow);
 }
+.tt-preset-chip.is-active:hover { color: #fff; }
 
 /* ============================================================ 3. Control cards */
 .tt-controls {
@@ -397,6 +395,10 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 .tt-au-play {
   flex: 1 1 0;
   min-width: 96px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   font: inherit;
   font-size: 14px;
   font-weight: 700;
@@ -409,6 +411,13 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
   text-align: center;
   transition: border-color 0.15s, background 0.15s;
 }
+.tt-au-play::before {
+  content: '▶';
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+  flex: none;
+}
 .tt-au-play:hover { border-color: var(--accent-soft); }
 .tt-au-play:focus-visible { outline: 2px solid var(--accent-soft); outline-offset: 2px; }
 .tt-au-play:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -418,7 +427,7 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
   color: #fff;
   box-shadow: var(--accent-glow);
 }
-.tt-au-play--mix:hover:not(:disabled) { background: var(--accent-strong); border-color: var(--accent-strong); }
+.tt-au-play--mix:hover:not(:disabled) { background: var(--accent-strong); border-color: var(--accent-strong); color: #fff; }
 
 /* ============================================================ 6. Preview toolbar + actions */
 .tt-preview-bar {
@@ -428,10 +437,7 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
   justify-content: space-between;
   gap: 14px;
   margin: 16px 0 12px;
-  padding: 14px 16px;
-  background: var(--bg-elev);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  padding: 0;
 }
 .tt-preview-bar__left { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px; }
 .tt-preview-bar__right { display: flex; align-items: flex-end; gap: 10px; }
@@ -499,7 +505,7 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
   box-shadow: var(--accent-glow);
   transition: background 0.15s, border-color 0.15s, transform 0.05s;
 }
-.tt-btn:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+.tt-btn:hover { background: var(--accent-strong); border-color: var(--accent-strong); color: #fff; }
 .tt-btn:active { transform: translateY(1px); }
 .tt-btn:focus-visible { outline: 2px solid var(--accent-soft); outline-offset: 3px; }
 .tt-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
@@ -544,40 +550,15 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
   color: var(--paper-dim);
   max-width: 70ch;
 }
-
-/* Quiz bar (SPEC-09) */
-.tt-quiz {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 14px;
-  margin: 0 0 18px;
-  padding: 10px 14px;
-  background: rgba(124, 58, 237, 0.08);
-  border: 1px solid var(--accent-soft);
-  border-radius: var(--radius-sm);
+.tt-summary-intro {
+  font-weight: 700;
   color: var(--paper-ink);
 }
-.tt-quiz-q { font-size: 14px; font-weight: 700; }
-.tt-quiz-feedback { font-size: 13px; font-weight: 800; }
-.tt-quiz-feedback.is-ok { color: #15803d; }
-.tt-quiz-feedback.is-ng { color: #b91c1c; }
-.tt-quiz-actions { margin-left: auto; display: inline-flex; gap: 8px; }
-.tt-quiz-btn {
-  font: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 5px 13px;
-  border-radius: 999px;
-  cursor: pointer;
-  border: 1px solid var(--accent);
-  background: var(--accent);
-  color: #fff;
+.tt-summary-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
 }
-.tt-quiz-btn--ghost { background: #fff; color: var(--accent-strong); }
-/* Answer feedback on the board */
-.tt-note.is-correct .tt-shape { stroke: #15803d; stroke-width: 4.5; }
-.tt-note.is-wrong .tt-shape { stroke: #b91c1c; stroke-width: 4.5; }
+.tt-summary-list li + li { margin-top: 4px; }
 
 .tt-board { overflow-x: auto; margin-bottom: 8px; }
 .tt-empty { margin: 0; padding: 40px 8px; color: var(--paper-dim); font-size: 15px; text-align: center; }
@@ -594,7 +575,12 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 .tt-note .tt-shape { stroke: var(--note-stroke); stroke-width: 1.6; transition: stroke 0.08s, stroke-width 0.08s; }
 /* Lit while the note sounds during playback (SPEC-06). */
 .tt-note.is-playing .tt-shape { stroke: var(--accent-soft); stroke-width: 4.5; }
-.tt-note .tt-label { font-size: 14px; font-weight: 700; pointer-events: none; }
+.tt-note .tt-label {
+  font-family: var(--note-label-font);
+  font-size: 14px;
+  font-weight: 700;
+  pointer-events: none;
+}
 @media (prefers-reduced-motion: reduce) {
   .tt-note .tt-shape { transition: none; }
 }
@@ -613,10 +599,10 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 /* Guide tones: same fill as chord tones, distinguished by the outer ring. */
 .tt-guide .tt-shape { fill: var(--note-guide); stroke: var(--note-chord-stroke); }
 .tt-guide .tt-label { fill: var(--note-guide-fg); }
-.tt-guide .tt-ring { fill: none; stroke: var(--note-stroke); stroke-width: 2; }
+.tt-guide .tt-ring { fill: none; stroke: var(--note-stroke); stroke-width: 1.6; }
 
 /* Chord tone outside the current scale: distinct fill + dashed ring. */
-.tt-out .tt-shape { fill: var(--note-out); stroke: var(--note-out-stroke); }
+.tt-out .tt-shape { fill: var(--note-out); stroke: none; }
 .tt-out .tt-label { fill: var(--note-out-fg); }
 .tt-ring--out { fill: none; stroke: var(--note-stroke); stroke-width: 1.4; stroke-dasharray: 3 2.4; }
 
@@ -647,34 +633,6 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 .tt-swatch--chordtone { background: var(--note-chord); }
 .tt-swatch--scale { background: var(--note-scale); }
 .tt-swatch--out { background: var(--note-out); border-style: dashed; }
-.tt-glossary-link { margin-left: 8px; color: var(--accent); font-weight: 700; }
-
-/* Glossary (SPEC-11) */
-.tt-glossary {
-  margin: 22px 0 0;
-  padding: 14px 18px;
-  background: var(--bg-elev);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-}
-.tt-glossary > summary {
-  cursor: pointer;
-  font-weight: 800;
-  color: var(--accent-soft);
-  letter-spacing: 0.04em;
-}
-.tt-glossary-list { margin: 14px 0 0; }
-.tt-glossary-list dt { font-weight: 800; color: var(--text); margin-top: 12px; }
-.tt-glossary-list dt:first-child { margin-top: 0; }
-.tt-glossary-list dd {
-  margin: 4px 0 0;
-  color: var(--text-dim);
-  font-size: 13.5px;
-  line-height: 1.6;
-}
-/* Briefly flag a term jumped to from the legend link. */
-.tt-glossary-list dt:target { color: var(--accent-soft); }
-
 /* Sheet detail: scale / chord columns (name + formula + notes + description). */
 .tt-sheet-info {
   display: grid;
@@ -787,7 +745,75 @@ select:focus-visible, input:focus-visible, .tt-combo-input:focus-visible {
 }
 .tt-coach-next { background: var(--accent); border-color: var(--accent); color: #fff; }
 .tt-coach-skip:hover { border-color: var(--accent-soft); }
-.tt-coach-next:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+.tt-coach-next:hover { background: var(--accent-strong); border-color: var(--accent-strong); color: #fff; }
+
+.tt-help-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(2, 6, 23, 0.72);
+}
+.tt-help-modal {
+  width: min(720px, 100%);
+  max-height: min(82vh, 920px);
+  overflow: auto;
+  padding: 22px 22px 18px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.tt-help-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.tt-help-title {
+  font-size: 22px;
+  color: var(--text);
+}
+.tt-help-close {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-elev2);
+  color: var(--text);
+}
+.tt-help-close:hover { border-color: var(--accent-soft); }
+.tt-help-close:focus-visible { outline: 2px solid var(--accent-soft); outline-offset: 2px; }
+.tt-help-body {
+  display: grid;
+  gap: 14px;
+}
+.tt-help-section {
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.tt-help-section:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+.tt-help-section-title {
+  margin: 0 0 6px;
+  font-size: 15px;
+  color: var(--text);
+}
+.tt-help-section-body {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.7;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .tt-toast { transition: none; }
